@@ -1,0 +1,78 @@
+@import "../../style/colors.scss";
+* {
+	margin: 0;
+}
+.sidebar-nav {
+	height: 100vh;
+	width: 300px;
+	background-color: $custom-gray-dark;
+  
+	.logo-picture-container {
+		background-color: $custom-blue-dark;
+		padding-top: 30px;
+		height: 160px;
+	}
+
+	.logo-container {
+		position: absolute;
+		top: 15px;
+		left: 15px;
+
+		.logo {
+			color: $light;
+		}
+	}
+
+	.person-container {
+		text-align: center;
+		margin-top: 40px;
+		.person-name {
+			color: $light;
+			font-weight: 400;
+		}
+		.person-username {
+			color: $custom-gray;
+			padding: 5px;
+			font-weight: 400;
+		}
+		.person-picture {
+			margin-top: 10px;
+			width: 75px;
+			border-radius: 50%;
+			border: 10px solid $custom-gray-dark;
+		}
+	}
+
+	.itens-list {
+		margin-top: 50px;
+		list-style: none;
+		padding: 0;
+		* {
+			text-decoration: none;
+		}
+		.text-icon {
+			margin-right: 12px;
+		}
+		.item {
+			transition: all 0.1s ease-in;
+			cursor: pointer;
+			padding: 15px;
+			color: $light;
+		}
+		.selected {
+			background-color: $blue;
+			border-radius: 0 5px 5px 0;
+			transition: all 0.2s ease-in-out;
+		}
+		.item:hover:not(.selected) {
+			background-color: $gray-dark;
+		}
+
+		.options {
+			position: absolute;
+			bottom: 0;
+			border-top: 1px $custom-gray solid;
+			width: 300px;
+		}
+	}
+}
