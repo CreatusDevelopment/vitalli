@@ -1,12 +1,13 @@
 @import "../../style/colors.scss";
+@import "../../style/mesures.scss";
 * {
 	margin: 0;
 }
 .sidebar-nav {
 	height: 100vh;
-	width: 300px;
+	width: $nav-width;
 	background-color: $custom-gray-dark;
-  
+
 	.logo-picture-container {
 		background-color: $custom-blue-dark;
 		padding-top: 30px;
@@ -35,11 +36,17 @@
 			padding: 5px;
 			font-weight: 400;
 		}
-		.person-picture {
+		.avatar-container {
 			margin-top: 10px;
-			width: 75px;
-			border-radius: 50%;
-			border: 10px solid $custom-gray-dark;
+			text-align: center;
+			display: flex;
+			justify-content: center;
+
+			.person-picture {
+				width: 75px;
+				height: 75px;
+				border: 10px solid $custom-gray-dark;
+			}
 		}
 	}
 
@@ -72,7 +79,7 @@
 			position: absolute;
 			bottom: 0;
 			border-top: 1px $custom-gray solid;
-			width: 300px;
+			width: $nav-width;
 		}
 	}
 }

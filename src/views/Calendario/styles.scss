@@ -1,0 +1,19 @@
+@import "../../style/mesures.scss";
+@import "../../style/colors.scss";
+.calendar-container {
+	height: 100vh;
+	width: calc(100vw - #{$nav-width});
+	display: flex;
+	flex-direction: row;
+	.calendar-inner {
+		display: flex;
+		align-items: center;
+		text-align: center;
+		justify-content: center;
+		width: 50%;
+		background-color: $light;
+	}
+	.datagrid-inner {
+		width: 50%;
+	}
+}

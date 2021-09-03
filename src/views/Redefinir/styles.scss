@@ -1,0 +1,30 @@
+@import "../../style/colors.scss";
+
+.redefinir-view {
+	display: flex;
+	align-items: center;
+	align-self: center;
+	align-content: center;
+	text-align: center;
+	justify-content: center;
+	height: 100vh;
+	flex-direction: column;
+	.alert {
+		top: 0;
+		position: absolute;
+		width: 100%;
+	}
+	.form-container {
+		margin-top: 20px;
+		width: 300px;
+		display: flex;
+		flex-direction: column;
+		.input {
+			margin-top: 10px;
+		}
+		.button {
+			background-color: $blue;
+			color: $light;
+		}
+	}
+}

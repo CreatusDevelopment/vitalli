@@ -8,6 +8,8 @@ import {
 	Pacientes,
 	Locatarios,
 	Login,
+	Esqueci_a_senha,
+	Redefinir,
 } from "./views";
 import { useSelector, useDispatch } from "react-redux";
 import { logIn, logOut } from "./redux/actions";
@@ -44,6 +46,8 @@ function App() {
 			<Router className="App">
 				<div>
 					<Switch>
+						<Route path="/esqueci_a_senha" component={Esqueci_a_senha} exact />
+						<Route path="/redefinir/:id" component={Redefinir} exact />
 						<Route path="/" component={Login} />
 					</Switch>
 				</div>

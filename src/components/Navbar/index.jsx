@@ -13,8 +13,11 @@ import "./style.scss";
 import Item from "./NavItem";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../redux/actions";
+import Avatar from "@material-ui/core/Avatar";
 
 export default function Navbar(props) {
+	const [Name, setName] = useState("Guilherme Carvalho Silva");
+	const [Email, setEmail] = useState("guilherme@creatus.net.br");
 	const pathName = useLocation().pathname;
 	const [Active, setActive] = useState("");
 	useEffect(() => {
@@ -29,9 +32,13 @@ export default function Navbar(props) {
 					<h1 className="logo">VP</h1>
 				</div>
 				<div className="person-container">
-					<h3 className="person-name">Guilherme Carvalho Silva</h3>
-					<p className="person-username">guilherme@creatus.net.br</p>
-					<img className="person-picture" alt="sua foto aqui" src="/eu.jpg" />
+					<h3 className="person-name">{Name}</h3>
+					<p className="person-username">{Email}</p>
+					<div className="avatar-container">
+						<Avatar className="person-picture" alt={Name}>
+							{Name.at(0)}
+						</Avatar>
+					</div>
 				</div>
 			</div>
 			<ul className="itens-list">

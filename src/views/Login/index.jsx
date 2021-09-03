@@ -29,6 +29,7 @@ export default function Login() {
 			</div>
 			<form className="form-container" onSubmit={handleSubmit}>
 				<TextField
+					autoComplete="username"
 					className="input"
 					id="email"
 					label="Email"
@@ -40,6 +41,7 @@ export default function Login() {
 					}}
 				/>
 				<TextField
+					autoComplete="current-password"
 					className="input"
 					id="senha"
 					label="Senha"
@@ -53,7 +55,14 @@ export default function Login() {
 				<Button className="input button" variant="contained" type="submit">
 					Entrar
 				</Button>
-				<Button className="input">Esqueceu sua senha?</Button>
+				<Button
+					className="input forgot-password"
+					onClick={() => {
+						history.push("/esqueci_a_senha");
+					}}
+				>
+					Esqueceu sua senha?
+				</Button>
 			</form>
 		</div>
 	);
