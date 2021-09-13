@@ -6,6 +6,10 @@ import reportWebVitals from "./reportWebVitals";
 import { createStore } from "redux";
 import allReducers from "./redux/reducers";
 import { Provider } from "react-redux";
+import axios from "axios";
+
+axios.defaults.baseURL = "https://creatus.net.br:5000/";
+// axios.defaults.headers.common['Authorization'] = localStorage.getItem("token");
 
 const store = createStore(allReducers);
 

@@ -1,0 +1,9 @@
+@import "../../style/mesures.scss";
+@import "../../style/colors.scss";
+
+.pacientes-container {
+	width: calc(100vw - #{$nav-width});
+}
+.datagrid-button {
+	margin-left: 10px !important;
+}

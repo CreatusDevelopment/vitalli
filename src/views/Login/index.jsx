@@ -20,7 +20,7 @@ export default function Login() {
 		console.log(Email);
 		console.log(Password);
 
-		history.push("/home");
+		history.push("/calendario");
 	}
 	return (
 		<div className="login-view">

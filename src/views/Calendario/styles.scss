@@ -1,5 +1,6 @@
 @import "../../style/mesures.scss";
 @import "../../style/colors.scss";
+
 .calendar-container {
 	height: 100vh;
 	width: calc(100vw - #{$nav-width});
@@ -11,9 +12,64 @@
 		text-align: center;
 		justify-content: center;
 		width: 50%;
+		flex-direction: column;
 		background-color: $light;
+
+		.new-apoint {
+			display: flex;
+			align-items: center;
+			text-align: center;
+			height: 50%;
+			width: 100%;
+			flex-direction: column;
+			padding: 0;
+
+			.outter-form {
+				height: 100%;
+				width: 100%;
+				overflow-y: scroll;
+				display: flex;
+				align-items: center;
+				text-align: center;
+				flex-direction: column;
+
+				.title {
+					margin-top: 10px;
+					margin-bottom: 30px;
+					font-weight: 500;
+					width: 100%;
+				}
+				.input {
+					margin-bottom: 10px;
+					width: 300px;
+				}
+				.button {
+					background-color: $blue;
+					color: $light;
+					margin-top: 10px;
+				}
+				.recorrente-div {
+					margin-top: 10px;
+					margin-bottom: 30px;
+				}
+			}
+		}
+		.calendar {
+			display: flex;
+			align-items: center;
+			text-align: center;
+			justify-content: center;
+			height: 50%;
+			width: 100%;
+		}
 	}
 	.datagrid-inner {
 		width: 50%;
+	}
+	.confirm-button {
+		margin-left: 10px;
+	}
+	.delete-button {
+		margin-left: 10px;
 	}
 }

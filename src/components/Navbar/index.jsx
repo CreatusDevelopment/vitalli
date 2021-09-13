@@ -1,7 +1,6 @@
 //rfc
 import React, { useEffect, useState } from "react";
 import {
-	faHome,
 	faCalendar,
 	faBook,
 	faUser,
@@ -42,7 +41,6 @@ export default function Navbar(props) {
 				</div>
 			</div>
 			<ul className="itens-list">
-				<Item title="Home" link="/home" icon={faHome} linkref={Active} />
 				<Item
 					title="Calendário"
 					link="/calendario"

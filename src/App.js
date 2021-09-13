@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import Navbar from "./components/Navbar/index";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
-	Home,
 	Financeiro,
 	Calendario,
 	Pacientes,
@@ -32,7 +31,6 @@ function App() {
 				<div className="App">
 					<Navbar />
 					<Switch>
-						<Route path="/home" component={Home} exact />
 						<Route path="/calendario" component={Calendario} exact />
 						<Route path="/pacientes" component={Pacientes} exact />
 						<Route path="/locatarios" component={Locatarios} exact />
