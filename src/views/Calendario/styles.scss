@@ -6,6 +6,10 @@
 	width: calc(100vw - #{$nav-width});
 	display: flex;
 	flex-direction: row;
+	.snack-container {
+		position: absolute;
+		display: none;
+	}
 	.calendar-inner {
 		display: flex;
 		align-items: center;

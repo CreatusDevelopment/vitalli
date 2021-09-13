@@ -19,6 +19,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { makeStyles } from "@material-ui/core/styles";
 import axios from "axios";
+import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import Alert from "@material-ui/lab/Alert";
 
 const theme = createTheme(
 	{
@@ -113,31 +117,79 @@ export default function Calendario() {
 	const [SendHealth, setSendHealth] = useState("");
 	const [SendPatient, setSendPatient] = useState("");
 	const [RecorrentData, setRecorrentData] = useState("");
+	const [SnackUndo, setSnackUndo] = useState(false);
+	const [SnackErr1, setSnackErr1] = useState(false);
+	const [SnackErr2, setSnackErr2] = useState(false);
+	const [SnackErr3, setSnackErr3] = useState(false);
+	const [SnackErr3Message, setSnackErr3Message] = useState("");
 
+	function preDeleteSchedule() {
+		for (let i = 0; i < DayInfo.length; i++) {
+			for (let j = 0; j < ScheduleId.length; j++) {
+				if (DayInfo[i].id === ScheduleId[j]) {
+					if (DayInfo[i].state === "confirmed") {
+						setSnackErr1(true);
+						setScheduleId([]);
+						return;
+					}
+				}
+			}
+		}
+
+		for (let i = 0; i < DayInfo.length; i++) {
+			for (let j = 0; j < ScheduleId.length; j++) {
+				if (DayInfo[i].id === ScheduleId[j]) {
+					let copy = DayInfo.slice();
+					copy[i].state = "deleted";
+					setDayInfo(copy);
+				}
+			}
+		}
+		if (JSON.parse(localStorage.getItem("toDelete") === null)) {
+			localStorage.setItem("toDelete", JSON.stringify(ScheduleId));
+		} else {
+			let temp = JSON.parse(localStorage.getItem("toDelete"));
+			temp = [...temp, ...ScheduleId];
+			localStorage.setItem("toDelete", JSON.stringify(temp));
+		}
+		setScheduleId([]);
+		setSnackUndo(true);
+	}
 	function deleteSchedule() {
+		for (let i = 0; i < DayInfo.length; i++) {
+			for (let j = 0; j < ScheduleId.length; j++) {
+				if (DayInfo[i].id === ScheduleId[j]) {
+					if (DayInfo[i].state === "confirmed") {
+						alert("voce nao pode deletar uma agenda confirmada!");
+						return;
+					}
+				}
+			}
+		}
 		axios({
 			method: "delete",
 			url: "/schedule/delete",
 			data: {
-				ids: ScheduleId,
+				ids: JSON.parse(localStorage.getItem("toDelete")),
 			},
 		})
 			.then(async (response) => {
-				// console.log(response);
+				let temp = JSON.parse(localStorage.getItem("toDelete"));
+				let copy = null;
 				for (let i = 0; i < DayInfo.length; i++) {
-					for (let j = 0; j < ScheduleId.length; j++) {
-						if (DayInfo[i].id === ScheduleId[j]) {
-							//TODO: change DayInfo[i].state = 'confirmed'
-							let copy = DayInfo.slice();
-							copy[i].state = "deleted";
-							setDayInfo(copy);
+					for (let j = 0; j < temp.length; j++) {
+						if (DayInfo[i].id === temp[j]) {
+							if (copy === null) copy = DayInfo.slice();
+							copy.pop(i);
 						}
 					}
 				}
-				setScheduleId([]);
+				setDayInfo(copy);
+				localStorage.removeItem("toDelete");
 			})
 			.catch(function (error) {
-				// console.log(error);
+				setSnackErr2(true);
+				localStorage.removeItem("toDelete");
 			});
 	}
 
@@ -192,7 +244,7 @@ export default function Calendario() {
 					size="small"
 					color="primary"
 					startIcon={<DeleteIcon />}
-					onClick={deleteSchedule}
+					onClick={preDeleteSchedule}
 				>
 					Deletar
 				</Button>
@@ -201,6 +253,23 @@ export default function Calendario() {
 	}
 
 	useEffect(() => {
+		if (JSON.parse(localStorage.getItem("toDelete") !== null)) {
+			axios({
+				method: "delete",
+				url: "/schedule/delete",
+				data: {
+					ids: JSON.parse(localStorage.getItem("toDelete")),
+				},
+			})
+				.then(async (response) => {
+					localStorage.removeItem("toDelete");
+				})
+				.catch(function (error) {
+					setSnackErr2(true);
+					localStorage.removeItem("toDelete");
+				});
+		}
+
 		axios({
 			method: "get",
 			url: "/patient/find",
@@ -278,12 +347,100 @@ export default function Calendario() {
 					});
 			})
 			.catch(function (error) {
-				console.log(error);
+				setSnackErr3Message(error.response.data.message);
+				setSnackErr3(true);
 			});
 	}
 
 	return (
 		<div className="calendar-container">
+			<div>
+				<Snackbar
+					open={SnackUndo}
+					autoHideDuration={6000}
+					onClose={(e, r) => {
+						if (r === "clickaway") return;
+						setSnackUndo(false);
+						deleteSchedule();
+					}}
+					message="Agenda deletada"
+					action={
+						<>
+							<Button
+								color="secondary"
+								size="small"
+								onClick={(e, r) => {
+									if (r === "clickaway") return;
+									setSnackUndo(false);
+									let temp = JSON.parse(localStorage.getItem("toDelete"));
+									localStorage.removeItem("toDelete");
+
+									for (let i = 0; i < DayInfo.length; i++) {
+										for (let j = 0; j < temp.length; j++) {
+											if (DayInfo[i].id === temp[j]) {
+												let copy = DayInfo.slice();
+												copy[i].state = " ";
+												setDayInfo(copy);
+											}
+										}
+									}
+								}}
+							>
+								DESFAZER
+							</Button>
+							<IconButton
+								size="small"
+								aria-label="close"
+								color="inherit"
+								onClick={(e, r) => {
+									if (r === "clickaway") return;
+									setSnackUndo(false);
+									deleteSchedule();
+								}}
+							>
+								<CloseIcon fontSize="small" />
+							</IconButton>
+						</>
+					}
+				/>
+				<Snackbar
+					open={SnackErr1}
+					autoHideDuration={6000}
+					onClose={(e, r) => {
+						if (r === "clickaway") return;
+						setSnackErr1(false);
+					}}
+				>
+					<Alert variant="filled" severity="error">
+						ERRO: Você não pode deletar uma agenda já confirmada!
+					</Alert>
+				</Snackbar>
+				<Snackbar
+					open={SnackErr2}
+					autoHideDuration={6000}
+					onClose={(e, r) => {
+						if (r === "clickaway") return;
+						setSnackErr2(false);
+					}}
+				>
+					<Alert variant="filled" severity="error">
+						ERRO: Algo de errado aconteceu ao deletar sua agenda. Tente
+						recarregar a página.
+					</Alert>
+				</Snackbar>
+				<Snackbar
+					open={SnackErr3}
+					autoHideDuration={6000}
+					onClose={(e, r) => {
+						if (r === "clickaway") return;
+						setSnackErr3(false);
+					}}
+				>
+					<Alert variant="filled" severity="error">
+						{SnackErr3Message}
+					</Alert>
+				</Snackbar>
+			</div>
 			<div className="calendar-inner">
 				<div className="new-apoint">
 					<form
