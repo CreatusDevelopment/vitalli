@@ -3,7 +3,13 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { logIn } from "../../redux/actions";
+import { login } from "../../functions";
+import {
+	logIn,
+	_setToken,
+	_setUserEmail,
+	_setUserName,
+} from "../../redux/actions";
 
 import "./styles.scss";
 
@@ -15,10 +21,23 @@ export default function Login() {
 
 	function handleSubmit(e) {
 		e.preventDefault();
-		dispatch(logIn());
-		localStorage.setItem("isLogged", true);
-		console.log(Email);
-		console.log(Password);
+		login(
+			(e) => {
+				if (e?.data) {
+					dispatch(logIn());
+					dispatch(_setToken(e.data.message.token));
+					dispatch(_setUserName(e.data.message.name));
+					dispatch(_setUserEmail(e.data.message.email));
+					localStorage.setItem("isLogged", true);
+					localStorage.setItem("token", e.data.message.token);
+					localStorage.setItem("user_name", e.data.message.name);
+					localStorage.setItem("user_email", e.data.message.email);
+				} else {
+					console.log(e);
+				}
+			},
+			{ user: Email, pass: Password }
+		);
 
 		history.push("/calendario");
 	}
@@ -34,7 +53,7 @@ export default function Login() {
 					id="email"
 					label="Email"
 					variant="outlined"
-					type="email"
+					type="text"
 					required
 					onChange={(e) => {
 						setEmail(e.target.value);

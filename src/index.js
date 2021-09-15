@@ -9,9 +9,12 @@ import { Provider } from "react-redux";
 import axios from "axios";
 
 axios.defaults.baseURL = "https://creatus.net.br:5000/";
-// axios.defaults.headers.common['Authorization'] = localStorage.getItem("token");
+axios.defaults.headers.common["Authorization"] = localStorage.getItem("token");
 
-const store = createStore(allReducers);
+const store = createStore(
+	allReducers,
+	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
 
 ReactDOM.render(
 	<Provider store={store}>

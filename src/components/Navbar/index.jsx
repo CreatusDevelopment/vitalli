@@ -10,15 +10,17 @@ import {
 import { useLocation } from "react-router-dom";
 import "./style.scss";
 import Item from "./NavItem";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logOut } from "../../redux/actions";
 import Avatar from "@material-ui/core/Avatar";
 
 export default function Navbar(props) {
-	const [Name, setName] = useState("Guilherme Carvalho Silva");
-	const [Email, setEmail] = useState("guilherme@creatus.net.br");
 	const pathName = useLocation().pathname;
 	const [Active, setActive] = useState("");
+
+	const name = useSelector((state) => state.name);
+	const email = useSelector((state) => state.email);
+
 	useEffect(() => {
 		setActive(window.location.pathname);
 	}, [pathName]);
@@ -31,11 +33,11 @@ export default function Navbar(props) {
 					<h1 className="logo">VP</h1>
 				</div>
 				<div className="person-container">
-					<h3 className="person-name">{Name}</h3>
-					<p className="person-username">{Email}</p>
+					<h3 className="person-name">{name}</h3>
+					<p className="person-username">{email}</p>
 					<div className="avatar-container">
-						<Avatar className="person-picture" alt={Name}>
-							{Name.at(0)}
+						<Avatar className="person-picture" alt={name}>
+							{name?.at(0)}
 						</Avatar>
 					</div>
 				</div>
@@ -71,7 +73,7 @@ export default function Navbar(props) {
 						link="/"
 						icon={faSignOutAlt}
 						onClick={() => {
-							localStorage.setItem("isLogged", false);
+							localStorage.clear("isLogged");
 							dispatch(logOut());
 						}}
 					/>

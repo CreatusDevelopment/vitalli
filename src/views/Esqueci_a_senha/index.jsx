@@ -4,6 +4,7 @@ import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
 import TextField from "@material-ui/core/TextField";
 import { useHistory } from "react-router-dom";
+import { forgotPassword } from "../../functions";
 
 import "./styles.scss";
 
@@ -13,8 +14,15 @@ export default function Esqueci_a_senha() {
 	const [Show, setShow] = useState(false);
 	function handleSubmit(e) {
 		e.preventDefault();
-		console.log(Email);
-		setShow(true);
+		forgotPassword(
+			(e) => {
+				if (e?.data) setShow(true);
+				else console.log(e.message.data);
+			},
+			{
+				email: Email,
+			}
+		);
 	}
 	return (
 		<div className="forgot-view" onSubmit={handleSubmit}>

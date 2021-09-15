@@ -1,4 +1,7 @@
-function loggedReducer(state = false, action) {
+function loggedReducer(
+	state = localStorage.getItem("isLogged") ?? false,
+	action
+) {
 	switch (action.type) {
 		case "LOGGEDIN":
 			return true;

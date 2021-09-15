@@ -4,6 +4,7 @@ import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
 import TextField from "@material-ui/core/TextField";
 import { useHistory } from "react-router-dom";
+import { newPassowrd } from "../../functions";
 
 import "./styles.scss";
 
@@ -16,12 +17,24 @@ export default function Redefinir(props) {
 
 	function handleSubmit(e) {
 		e.preventDefault();
+
 		console.log(props.match.params.id);
 		console.log(Password);
 		console.log(ConfirmPassword);
 		if (Password === ConfirmPassword) {
 			setError(false);
-			setShow(true);
+			newPassowrd(
+				(e) => {
+					if (e?.data) {
+						console.log(e.data);
+						setShow(true);
+					} else {
+						console.log(e);
+					}
+				},
+				{ pass: Password },
+				props.match.params.id
+			);
 		} else {
 			setError(true);
 		}

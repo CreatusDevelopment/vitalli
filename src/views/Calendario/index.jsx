@@ -18,11 +18,18 @@ import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import { makeStyles } from "@material-ui/core/styles";
-import axios from "axios";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Alert from "@material-ui/lab/Alert";
+import {
+	getPatient,
+	getHealthPlan,
+	getSchedule,
+	deleteSchedule as _deleteSchedule,
+	confirmSchedule as _confirmSchedule,
+	createSchedule,
+} from "../../functions";
 
 const theme = createTheme(
 	{
@@ -107,6 +114,7 @@ export default function Calendario() {
 	const classes = useStyles();
 
 	const [value, onChange] = useState(new Date());
+	const [Loading, setLoading] = useState(false);
 	const [Recorrente, setRecorrente] = useState(false);
 	const [Consulta, setConsulta] = useState(false);
 	const [DayInfo, setDayInfo] = useState([]);
@@ -166,58 +174,48 @@ export default function Calendario() {
 				}
 			}
 		}
-		axios({
-			method: "delete",
-			url: "/schedule/delete",
-			data: {
-				ids: JSON.parse(localStorage.getItem("toDelete")),
-			},
-		})
-			.then(async (response) => {
-				let temp = JSON.parse(localStorage.getItem("toDelete"));
-				let copy = null;
-				for (let i = 0; i < DayInfo.length; i++) {
-					for (let j = 0; j < temp.length; j++) {
-						if (DayInfo[i].id === temp[j]) {
-							if (copy === null) copy = DayInfo.slice();
-							copy.pop(i);
+		_deleteSchedule(
+			function (e) {
+				if (e?.data) {
+					let temp = JSON.parse(localStorage.getItem("toDelete"));
+					let copy = null;
+					for (let i = 0; i < DayInfo.length; i++) {
+						for (let j = 0; j < temp.length; j++) {
+							if (DayInfo[i].id === temp[j]) {
+								if (copy === null) copy = DayInfo.slice();
+								copy.pop(i);
+							}
 						}
 					}
+					setDayInfo(copy);
+					localStorage.removeItem("toDelete");
+				} else {
+					setSnackErr2(true);
+					localStorage.removeItem("toDelete");
 				}
-				setDayInfo(copy);
-				localStorage.removeItem("toDelete");
-			})
-			.catch(function (error) {
-				setSnackErr2(true);
-				localStorage.removeItem("toDelete");
-			});
+			},
+			{ ids: JSON.parse(localStorage.getItem("toDelete")) }
+		);
 	}
 
 	function confirmSchedule() {
-		axios({
-			method: "post",
-			url: "/schedule/confirm",
-			data: {
-				ids: ScheduleId,
-			},
-		})
-			.then(async (response) => {
-				// console.log(response);
-				for (let i = 0; i < DayInfo.length; i++) {
-					for (let j = 0; j < ScheduleId.length; j++) {
-						if (DayInfo[i].id === ScheduleId[j]) {
-							//TODO: change DayInfo[i].state = 'confirmed'
-							let copy = DayInfo.slice();
-							copy[i].state = "confirmed";
-							setDayInfo(copy);
+		_confirmSchedule(
+			function (e) {
+				if (e?.data) {
+					for (let i = 0; i < DayInfo.length; i++) {
+						for (let j = 0; j < ScheduleId.length; j++) {
+							if (DayInfo[i].id === ScheduleId[j]) {
+								let copy = DayInfo.slice();
+								copy[i].state = "confirmed";
+								setDayInfo(copy);
+							}
 						}
 					}
+					setScheduleId([]);
 				}
-				setScheduleId([]);
-			})
-			.catch(function (error) {
-				// console.log(error);
-			});
+			},
+			{ ids: ScheduleId }
+		);
 	}
 
 	function CustomToolbar() {
@@ -254,72 +252,44 @@ export default function Calendario() {
 
 	useEffect(() => {
 		if (JSON.parse(localStorage.getItem("toDelete") !== null)) {
-			axios({
-				method: "delete",
-				url: "/schedule/delete",
-				data: {
-					ids: JSON.parse(localStorage.getItem("toDelete")),
+			_deleteSchedule(
+				function (e) {
+					localStorage.removeItem("toDelete");
+					if (!e?.data) setSnackErr2(true);
 				},
-			})
-				.then(async (response) => {
-					localStorage.removeItem("toDelete");
-				})
-				.catch(function (error) {
-					setSnackErr2(true);
-					localStorage.removeItem("toDelete");
-				});
+				{ ids: JSON.parse(localStorage.getItem("toDelete")) }
+			);
 		}
 
-		axios({
-			method: "get",
-			url: "/patient/find",
-		})
-			.then(async (response) => {
-				setPatinet(response.data);
-			})
-			.catch(function (error) {
-				// console.log(error);
-			});
-
-		axios({
-			method: "get",
-			url: "/healthplan/find",
-		})
-			.then(async (response) => {
-				// console.log(response.data);
-
-				setHealthPlan(response.data);
-			})
-			.catch(function (error) {
-				// console.log(error);
-			});
+		getPatient(setPatinet);
+		getHealthPlan(setHealthPlan);
 	}, []);
 
 	useEffect(() => {
+		setDayInfo([]);
+		setLoading(true);
 		setScheduleId([]);
-		axios({
-			method: "get",
-			url: "/schedule/get",
-			params: {
-				date: value,
+		getSchedule(
+			(e) => {
+				setDayInfo(e);
+				setLoading(false);
 			},
-		})
-			.then(async (response) => {
-				setDayInfo(response.data);
-				// console.log(DayInfo);
-			})
-			.catch(function (error) {
-				// console.log(error);
-			});
+			{ date: value }
+		);
 	}, [value]);
 
 	function handleSubmit(e) {
 		e.preventDefault();
-		console.log(ScheduleId);
-		axios({
-			method: "post",
-			url: "/schedule/create",
-			data: {
+		createSchedule(
+			function (e) {
+				if (e?.data) {
+					getSchedule(setDayInfo, { date: value });
+				} else {
+					setSnackErr3Message(e.response.data.message);
+					setSnackErr3(true);
+				}
+			},
+			{
 				initial: value,
 				start: Hour,
 				healthplan: SendHealth,
@@ -327,29 +297,8 @@ export default function Calendario() {
 				tenant: "612fe01ed0039d1ad6c82a3d",
 				type: Consulta ? "consultation" : "session",
 				day: Recorrente ? RecorrentData : null,
-			},
-		})
-			.then(async (response) => {
-				console.log(response);
-				axios({
-					method: "get",
-					url: "/schedule/get",
-					params: {
-						date: value,
-					},
-				})
-					.then(async (response) => {
-						setDayInfo(response.data);
-						// console.log(DayInfo);
-					})
-					.catch(function (error) {
-						console.log(error);
-					});
-			})
-			.catch(function (error) {
-				setSnackErr3Message(error.response.data.message);
-				setSnackErr3(true);
-			});
+			}
+		);
 	}
 
 	return (
@@ -558,6 +507,7 @@ export default function Calendario() {
 			<div className={"datagrid-inner " + classes.root}>
 				<ThemeProvider theme={theme}>
 					<DataGrid
+						loading={Loading}
 						components={{
 							Toolbar: CustomToolbar,
 						}}

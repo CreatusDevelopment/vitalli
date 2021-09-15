@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Navbar from "./components/Navbar/index";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
@@ -10,20 +9,10 @@ import {
 	Esqueci_a_senha,
 	Redefinir,
 } from "./views";
-import { useSelector, useDispatch } from "react-redux";
-import { logIn, logOut } from "./redux/actions";
+import { useSelector } from "react-redux";
 
 function App() {
 	const isLogged = useSelector((state) => state.isLogged);
-	const dispatch = useDispatch();
-	useEffect(() => {
-		if (localStorage.getItem("isLogged") === "true") {
-			dispatch(logIn());
-		} else {
-			dispatch(logOut());
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
 
 	if (isLogged) {
 		return (
