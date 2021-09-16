@@ -251,6 +251,9 @@ export default function Calendario() {
 	}
 
 	useEffect(() => {
+		if (localStorage.getItem("token") === null) {
+			window.location.reload();
+		}
 		if (JSON.parse(localStorage.getItem("toDelete") !== null)) {
 			_deleteSchedule(
 				function (e) {
@@ -294,7 +297,6 @@ export default function Calendario() {
 				start: Hour,
 				healthplan: SendHealth,
 				patient: SendPatient,
-				tenant: "612fe01ed0039d1ad6c82a3d",
 				type: Consulta ? "consultation" : "session",
 				day: Recorrente ? RecorrentData : null,
 			}

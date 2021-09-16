@@ -4,12 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../../functions";
-import {
-	logIn,
-	_setToken,
-	_setUserEmail,
-	_setUserName,
-} from "../../redux/actions";
+import { logIn, _setUserEmail, _setUserName } from "../../redux/actions";
 
 import "./styles.scss";
 
@@ -25,7 +20,6 @@ export default function Login() {
 			(e) => {
 				if (e?.data) {
 					dispatch(logIn());
-					dispatch(_setToken(e.data.message.token));
 					dispatch(_setUserName(e.data.message.name));
 					dispatch(_setUserEmail(e.data.message.email));
 					localStorage.setItem("isLogged", true);

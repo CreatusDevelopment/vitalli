@@ -74,6 +74,7 @@ export default function Navbar(props) {
 						icon={faSignOutAlt}
 						onClick={() => {
 							localStorage.clear("isLogged");
+							localStorage.clear("token");
 							dispatch(logOut());
 						}}
 					/>

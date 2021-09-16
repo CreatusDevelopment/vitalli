@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AddIcon from "@material-ui/icons/Add";
@@ -10,6 +10,7 @@ import {
 } from "@mui/x-data-grid";
 import Button from "@material-ui/core/Button";
 import "./styles.scss";
+import { getPatient } from "../../functions";
 
 const theme = createTheme(
 	{
@@ -49,7 +50,6 @@ function CustomToolbar() {
 		</GridToolbarContainer>
 	);
 }
-
 const columns = [
 	{ field: "name", headerName: "Nome", width: 250, editable: true },
 	{
@@ -78,75 +78,46 @@ const columns = [
 		editable: true,
 	},
 	{
-		field: "gn",
+		field: "guideId",
 		headerName: "Nº Guia",
 		width: 150,
 		editable: true,
+		valueGetter: (params) => {
+			return params.row.guide.id;
+		},
 	},
 	{
-		field: "saldo",
+		field: "guideValue",
 		headerName: "Saldo",
 		width: 150,
 		editable: true,
+		valueGetter: (params) => {
+			return params.row.guide.value;
+		},
 	},
-];
-
-const rows = [
-	{ id: 1, name: "Snow", start: "12:30", end: "13:30", convenio: "Unimed" },
-	{
-		id: 2,
-		name: "Lannister",
-		start: "12:30",
-		end: "13:30",
-		convenio: "Unimed",
-	},
-	{
-		id: 3,
-		name: "Lannister",
-		start: "12:30",
-		end: "13:30",
-		convenio: "Unimed",
-	},
-	{
-		id: 4,
-		name: "Targaryen",
-		start: "12:30",
-		end: "13:30",
-		convenio: "Unimed",
-	},
-	{
-		id: 6,
-		name: "Melisandre",
-		start: "12:30",
-		end: "13:30",
-		convenio: "Unimed",
-	},
-	{
-		id: 7,
-		name: "Clifford",
-		start: "12:30",
-		end: "13:30",
-		convenio: "Unimed",
-	},
-	{
-		id: 8,
-		name: "Frances",
-		start: "12:30",
-		end: "13:30",
-		convenio: "Unimed",
-	},
-	{ id: 9, name: "Roxie", start: "12:30", end: "13:30", convenio: "Unimed" },
 ];
 
 export default function Pacientes() {
+	const [Rows, setRows] = useState([]);
+	const [Loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		setRows([]);
+		setLoading(true);
+		getPatient((e) => {
+			setRows(e);
+			setLoading(false);
+		});
+	}, []);
 	return (
 		<div className="pacientes-container">
 			<ThemeProvider theme={theme}>
 				<DataGrid
+					loading={Loading}
 					components={{
 						Toolbar: CustomToolbar,
 					}}
-					rows={rows}
+					rows={Rows}
 					columns={columns}
 					pageSize={10}
 					rowsPerPageOptions={[10]}
