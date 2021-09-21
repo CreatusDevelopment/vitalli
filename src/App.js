@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 function App() {
 	const isLogged = useSelector((state) => state.isLogged);
 
-	if (isLogged) {
+	if (isLogged && localStorage.getItem("use_type") === "adm") {
 		return (
 			<Router>
 				<div className="App">
@@ -24,6 +24,32 @@ function App() {
 						<Route path="/pacientes" component={Pacientes} exact />
 						<Route path="/locatarios" component={Locatarios} exact />
 						<Route path="/financeiro" component={Financeiro} exact />
+						<Route path="/" component={Calendario} />
+					</Switch>
+				</div>
+			</Router>
+		);
+	} else if (isLogged && localStorage.getItem("use_type") === "secretary") {
+		return (
+			<Router>
+				<div className="App">
+					<Navbar />
+					<Switch>
+						<Route path="/calendario" component={Calendario} exact />
+						<Route path="/pacientes" component={Pacientes} exact />
+						<Route path="/" component={Calendario} />
+					</Switch>
+				</div>
+			</Router>
+		);
+	} else if (isLogged && localStorage.getItem("use_type") === "tenant") {
+		return (
+			<Router>
+				<div className="App">
+					<Navbar />
+					<Switch>
+						<Route path="/calendario" component={Calendario} exact />
+						<Route path="/" component={Calendario} />
 					</Switch>
 				</div>
 			</Router>

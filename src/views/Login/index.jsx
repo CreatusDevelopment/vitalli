@@ -19,11 +19,19 @@ export default function Login() {
 		login(
 			(e) => {
 				if (e?.data) {
+					console.log(e);
 					dispatch(logIn());
 					dispatch(_setUserName(e.data.message.name));
 					dispatch(_setUserEmail(e.data.message.email));
 					localStorage.setItem("isLogged", true);
-					localStorage.setItem("token", e.data.message.token);
+
+					const now = new Date();
+					const item = {
+						value: e.data.message.token,
+						expiry: now.getTime() + 86400 * 1000,
+					};
+					localStorage.setItem("token", JSON.stringify(item));
+					localStorage.setItem("use_type", e.data.message.type);
 					localStorage.setItem("user_name", e.data.message.name);
 					localStorage.setItem("user_email", e.data.message.email);
 				} else {
@@ -47,7 +55,7 @@ export default function Login() {
 					id="email"
 					label="Email"
 					variant="outlined"
-					type="text"
+					type="email"
 					required
 					onChange={(e) => {
 						setEmail(e.target.value);

@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export default function createSchedule(callback, data = undefined) {
+export default function deleteUndoTenant(callback, data = undefined) {
 	axios({
 		method: "post",
-		url: "/schedule/create",
+		url: "/user/delete/undo",
 		data: data,
 	})
 		.then(async (response) => {

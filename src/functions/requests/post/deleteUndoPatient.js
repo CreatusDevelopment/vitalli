@@ -1,9 +1,9 @@
 import axios from "axios";
 
-export default function createSchedule(callback, data = undefined) {
+export default function deleteUndoPatient(callback, data = undefined) {
 	axios({
 		method: "post",
-		url: "/schedule/create",
+		url: "/patient/delete/undo",
 		data: data,
 	})
 		.then(async (response) => {

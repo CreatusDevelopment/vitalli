@@ -6,22 +6,26 @@ import {
 	GridToolbarExport,
 	ptBR,
 } from "@mui/x-data-grid";
-import "react-calendar/dist/Calendar.css";
-import "./styles.scss";
-import { createTheme, ThemeProvider } from "@material-ui/core/styles";
-import DeleteIcon from "@material-ui/icons/Delete";
-import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import Switch from "@material-ui/core/Switch";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import { makeStyles } from "@material-ui/core/styles";
-import Snackbar from "@material-ui/core/Snackbar";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Alert from "@material-ui/lab/Alert";
+import {
+	createTheme,
+	ThemeProvider,
+	makeStyles,
+} from "@material-ui/core/styles";
+import {
+	Delete as DeleteIcon,
+	DoneOutlined as DoneOutlinedIcon,
+	Close as CloseIcon,
+} from "@material-ui/icons";
+import {
+	Button,
+	TextField,
+	Switch,
+	FormControlLabel,
+	Checkbox,
+	Snackbar,
+	IconButton,
+} from "@material-ui/core";
+import { Autocomplete, Alert } from "@material-ui/lab";
 import {
 	getPatient,
 	getHealthPlan,
@@ -29,7 +33,13 @@ import {
 	deleteSchedule as _deleteSchedule,
 	confirmSchedule as _confirmSchedule,
 	createSchedule,
+	preDeleteItem,
+	deleteItem,
+	undoPreDelete,
+	getTenant,
 } from "../../functions";
+import "react-calendar/dist/Calendar.css";
+import "./styles.scss";
 
 const theme = createTheme(
 	{
@@ -66,14 +76,6 @@ const columns = [
 		headerName: "Guia",
 		width: 150,
 	},
-	/*{
-		field: "fullName",
-		headerName: "Full name",
-		description: "This column has a value getter and is not sortable.",
-		sortable: false,
-		width: 160,
-		valueGetter: (params) => `${params.getValue(params.id, "firstName") || ""}`,
-	},*/
 ];
 
 const repeatWeek = [
@@ -111,6 +113,7 @@ const useStyles = makeStyles({
 });
 
 export default function Calendario() {
+	const localStorageName = "deleteSchedule";
 	const classes = useStyles();
 
 	const [value, onChange] = useState(new Date());
@@ -124,6 +127,8 @@ export default function Calendario() {
 	const [Hour, setHour] = useState("");
 	const [SendHealth, setSendHealth] = useState("");
 	const [SendPatient, setSendPatient] = useState("");
+	const [Tenant, setTenant] = useState([]);
+	const [TenantID, setTenantID] = useState("");
 	const [RecorrentData, setRecorrentData] = useState("");
 	const [SnackUndo, setSnackUndo] = useState(false);
 	const [SnackErr1, setSnackErr1] = useState(false);
@@ -132,72 +137,26 @@ export default function Calendario() {
 	const [SnackErr3Message, setSnackErr3Message] = useState("");
 
 	function preDeleteSchedule() {
-		for (let i = 0; i < DayInfo.length; i++) {
-			for (let j = 0; j < ScheduleId.length; j++) {
-				if (DayInfo[i].id === ScheduleId[j]) {
-					if (DayInfo[i].state === "confirmed") {
-						setSnackErr1(true);
-						setScheduleId([]);
-						return;
-					}
-				}
-			}
-		}
-
-		for (let i = 0; i < DayInfo.length; i++) {
-			for (let j = 0; j < ScheduleId.length; j++) {
-				if (DayInfo[i].id === ScheduleId[j]) {
-					let copy = DayInfo.slice();
-					copy[i].state = "deleted";
-					setDayInfo(copy);
-				}
-			}
-		}
-		if (JSON.parse(localStorage.getItem("toDelete") === null)) {
-			localStorage.setItem("toDelete", JSON.stringify(ScheduleId));
-		} else {
-			let temp = JSON.parse(localStorage.getItem("toDelete"));
-			temp = [...temp, ...ScheduleId];
-			localStorage.setItem("toDelete", JSON.stringify(temp));
-		}
-		setScheduleId([]);
-		setSnackUndo(true);
-	}
-	function deleteSchedule() {
-		for (let i = 0; i < DayInfo.length; i++) {
-			for (let j = 0; j < ScheduleId.length; j++) {
-				if (DayInfo[i].id === ScheduleId[j]) {
-					if (DayInfo[i].state === "confirmed") {
-						alert("voce nao pode deletar uma agenda confirmada!");
-						return;
-					}
-				}
-			}
-		}
-		_deleteSchedule(
-			function (e) {
-				if (e?.data) {
-					let temp = JSON.parse(localStorage.getItem("toDelete"));
-					let copy = null;
-					for (let i = 0; i < DayInfo.length; i++) {
-						for (let j = 0; j < temp.length; j++) {
-							if (DayInfo[i].id === temp[j]) {
-								if (copy === null) copy = DayInfo.slice();
-								copy.pop(i);
-							}
-						}
-					}
-					setDayInfo(copy);
-					localStorage.removeItem("toDelete");
-				} else {
-					setSnackErr2(true);
-					localStorage.removeItem("toDelete");
-				}
-			},
-			{ ids: JSON.parse(localStorage.getItem("toDelete")) }
+		preDeleteItem(
+			DayInfo,
+			setDayInfo,
+			ScheduleId,
+			setScheduleId,
+			setSnackErr1,
+			setSnackUndo,
+			localStorageName
 		);
 	}
-
+	function deleteSchedule() {
+		deleteItem(
+			DayInfo,
+			setDayInfo,
+			ScheduleId,
+			_deleteSchedule,
+			localStorageName,
+			setSnackErr2
+		);
+	}
 	function confirmSchedule() {
 		_confirmSchedule(
 			function (e) {
@@ -217,7 +176,6 @@ export default function Calendario() {
 			{ ids: ScheduleId }
 		);
 	}
-
 	function CustomToolbar() {
 		return (
 			<GridToolbarContainer>
@@ -251,20 +209,24 @@ export default function Calendario() {
 	}
 
 	useEffect(() => {
-		if (localStorage.getItem("token") === null) {
+		if (
+			localStorage.getItem("token") === null ||
+			localStorage.getItem("use_type") === null
+		) {
 			window.location.reload();
 		}
-		if (JSON.parse(localStorage.getItem("toDelete") !== null)) {
+		if (JSON.parse(localStorage.getItem(localStorageName) !== null)) {
 			_deleteSchedule(
 				function (e) {
-					localStorage.removeItem("toDelete");
+					localStorage.removeItem(localStorageName);
 					if (!e?.data) setSnackErr2(true);
 				},
-				{ ids: JSON.parse(localStorage.getItem("toDelete")) }
+				{ ids: JSON.parse(localStorage.getItem(localStorageName)) }
 			);
 		}
 
 		getPatient(setPatinet);
+		getTenant(setTenant);
 		getHealthPlan(setHealthPlan);
 	}, []);
 
@@ -277,9 +239,9 @@ export default function Calendario() {
 				setDayInfo(e);
 				setLoading(false);
 			},
-			{ date: value }
+			{ date: value, tenant: TenantID }
 		);
-	}, [value]);
+	}, [value, TenantID]);
 
 	function handleSubmit(e) {
 		e.preventDefault();
@@ -322,19 +284,12 @@ export default function Calendario() {
 								size="small"
 								onClick={(e, r) => {
 									if (r === "clickaway") return;
-									setSnackUndo(false);
-									let temp = JSON.parse(localStorage.getItem("toDelete"));
-									localStorage.removeItem("toDelete");
-
-									for (let i = 0; i < DayInfo.length; i++) {
-										for (let j = 0; j < temp.length; j++) {
-											if (DayInfo[i].id === temp[j]) {
-												let copy = DayInfo.slice();
-												copy[i].state = " ";
-												setDayInfo(copy);
-											}
-										}
-									}
+									undoPreDelete(
+										DayInfo,
+										setDayInfo,
+										setSnackUndo,
+										localStorageName
+									);
 								}}
 							>
 								DESFAZER
@@ -393,110 +348,139 @@ export default function Calendario() {
 				</Snackbar>
 			</div>
 			<div className="calendar-inner">
-				<div className="new-apoint">
-					<form
-						className="outter-form"
-						onSubmit={(e) => {
-							handleSubmit(e);
-						}}
-					>
-						<p className="title">Nova {Consulta ? "Consulta" : "Sessão"}</p>
-						<div>
-							<FormControlLabel
-								control={
-									<Switch
-										checked={Recorrente}
-										color="primary"
-										onChange={() => {
-											setRecorrente((prev) => !prev);
-										}}
-										disabled={Consulta}
+				{localStorage.getItem("use_type") === "adm" ||
+					(localStorage.getItem("use_type") === "secretary" && (
+						<div className="new-apoint">
+							<form
+								className="outter-form"
+								onSubmit={(e) => {
+									handleSubmit(e);
+								}}
+							>
+								<p className="title">Nova {Consulta ? "Consulta" : "Sessão"}</p>
+								<div>
+									<FormControlLabel
+										control={
+											<Switch
+												checked={Recorrente}
+												color="primary"
+												onChange={() => {
+													setRecorrente((prev) => !prev);
+												}}
+												disabled={Consulta}
+											/>
+										}
+										label="Evento Recorrente"
 									/>
-								}
-								label="Evento Recorrente"
-							/>
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={Consulta}
-										onChange={(event) => {
-											setConsulta(event.target.checked);
-										}}
-										name="sessao"
-										color="primary"
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={Consulta}
+												onChange={(event) => {
+													setConsulta(event.target.checked);
+												}}
+												name="sessao"
+												color="primary"
+											/>
+										}
+										label="Consulta"
 									/>
-								}
-								label="Consulta"
-							/>
-						</div>
-						{Recorrente && (
-							<div className="recorrente-div">
+								</div>
+								{Recorrente && (
+									<div className="recorrente-div">
+										<Autocomplete
+											className="input"
+											onChange={(event, value) => setRecorrentData(value?.nome)}
+											id="semana-de-repeticao"
+											options={repeatWeek}
+											getOptionLabel={(option) => option.nome}
+											renderInput={(params) => (
+												<TextField
+													{...params}
+													label="Repetir todo(a)..."
+													variant="outlined"
+												/>
+											)}
+										/>
+									</div>
+								)}
+
 								<Autocomplete
 									className="input"
-									onChange={(event, value) => setRecorrentData(value?.nome)}
-									id="semana-de-repeticao"
-									options={repeatWeek}
-									getOptionLabel={(option) => option.nome}
+									onChange={(event, value) => setSendPatient(value?._id)}
+									id="nome-paciente"
+									options={Patinet}
+									getOptionLabel={(option) => option.name}
 									renderInput={(params) => (
 										<TextField
 											{...params}
-											label="Repetir todo(a)..."
+											label="Paciente"
 											variant="outlined"
 										/>
 									)}
 								/>
-							</div>
-						)}
 
-						<Autocomplete
-							className="input"
-							onChange={(event, value) => setSendPatient(value?._id)}
-							id="nome-paciente"
-							options={Patinet}
-							getOptionLabel={(option) => option.name}
-							renderInput={(params) => (
-								<TextField {...params} label="Paciente" variant="outlined" />
-							)}
-						/>
-
-						<Autocomplete
-							className="input"
-							id="disabled-options-demo"
-							onChange={(event, value) => setHour(value)}
-							options={timeSlots}
-							getOptionDisabled={(option) => {
-								for (let i = 0; i < DayInfo.length; i++) {
-									if (option === DayInfo[i].start) {
-										return true;
-									}
-								}
-							}}
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									label="Horário de inicio"
-									variant="outlined"
+								<Autocomplete
+									className="input"
+									id="disabled-options-demo"
+									onChange={(event, value) => setHour(value)}
+									options={timeSlots}
+									getOptionDisabled={(option) => {
+										for (let i = 0; i < DayInfo.length; i++) {
+											if (option === DayInfo[i].start) {
+												return true;
+											}
+										}
+									}}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											label="Horário de inicio"
+											variant="outlined"
+										/>
+									)}
 								/>
-							)}
-						/>
 
-						<Autocomplete
-							className="input"
-							onChange={(event, value) => setSendHealth(value?._id)}
-							id="convenio"
-							options={HealthPlan}
-							getOptionLabel={(option) => option.name}
-							renderInput={(params) => (
-								<TextField {...params} label="Convenios" variant="outlined" />
-							)}
-						/>
+								<Autocomplete
+									className="input"
+									onChange={(event, value) => setSendHealth(value?._id)}
+									id="convenio"
+									options={HealthPlan}
+									getOptionLabel={(option) => option.name}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											label="Convenios"
+											variant="outlined"
+										/>
+									)}
+								/>
 
-						<Button className="input button" variant="contained" type="submit">
-							Enviar
-						</Button>
-					</form>
-				</div>
-				<div className="calendar">
+								<Button
+									className="input button"
+									variant="contained"
+									type="submit"
+								>
+									Enviar
+								</Button>
+							</form>
+						</div>
+					))}
+				<div className="calendar" Style="display:flex; flex-direction: column;">
+					{localStorage.getItem("use_type") === "adm" ||
+						(localStorage.getItem("use_type") === "secretary" && (
+							<Autocomplete
+								Style="width:350px;"
+								className="input"
+								onChange={(event, value) => setTenantID(value?._id)}
+								id="nome-locatario"
+								options={Tenant}
+								getOptionLabel={(option) => option.name}
+								renderInput={(params) => (
+									<TextField {...params} label="Locatário" variant="outlined" />
+								)}
+							/>
+						))}
 					<Calendar
 						onChange={(e) => {
 							// console.log(e);

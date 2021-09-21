@@ -49,24 +49,31 @@ export default function Navbar(props) {
 					icon={faCalendar}
 					linkref={Active}
 				/>
-				<Item
-					title="Pacientes"
-					link="/pacientes"
-					icon={faBook}
-					linkref={Active}
-				/>
-				<Item
-					title="Locatários"
-					link="/locatarios"
-					icon={faUser}
-					linkref={Active}
-				/>
-				<Item
-					title="Financeiro"
-					link="/financeiro"
-					icon={faWallet}
-					linkref={Active}
-				/>
+				{localStorage.getItem("use_type") === "adm" ||
+					(localStorage.getItem("use_type") === "secretary" && (
+						<Item
+							title="Pacientes"
+							link="/pacientes"
+							icon={faBook}
+							linkref={Active}
+						/>
+					))}
+				{localStorage.getItem("use_type") === "adm" && (
+					<Item
+						title="Locatários"
+						link="/locatarios"
+						icon={faUser}
+						linkref={Active}
+					/>
+				)}
+				{localStorage.getItem("use_type") === "adm" && (
+					<Item
+						title="Financeiro"
+						link="/financeiro"
+						icon={faWallet}
+						linkref={Active}
+					/>
+				)}
 				<div className="options">
 					<Item
 						title="Sair"

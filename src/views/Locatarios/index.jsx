@@ -16,14 +16,14 @@ import {
 	ptBR,
 } from "@mui/x-data-grid";
 import {
-	getPatient,
-	createPatient,
-	deletePatient,
+	createTenant,
 	preDeleteItem,
 	deleteItem,
 	undoPreDelete,
-	editUser,
-	deleteUndoPatient,
+	deleteUndoTenant,
+	getTenant,
+	deleteTenant,
+	editTenant,
 } from "../../functions";
 import {
 	Dialog,
@@ -35,6 +35,10 @@ import {
 	Button,
 	Snackbar,
 	IconButton,
+	Select,
+	MenuItem,
+	FormControl,
+	InputLabel,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import "./styles.scss";
@@ -51,50 +55,46 @@ const theme = createTheme(
 const columns = [
 	{ field: "name", headerName: "Nome", width: 250, editable: true },
 	{
-		field: "birthday",
-		headerName: "Nascimento",
-		width: 160,
-		editable: true,
-	},
-	{
-		field: "contact",
-		headerName: "Contato",
-		width: 150,
-		editable: true,
-	},
-	{
-		field: "address",
-		headerName: "Endereço",
-		width: 150,
-		editable: true,
-	},
-	{ field: "cep", headerName: "CEP", width: 150, editable: true },
-	{
 		field: "rg",
 		headerName: "RG",
 		width: 150,
 		editable: true,
 	},
+	{ field: "email", headerName: "Email", width: 150, editable: true },
+	{ field: "crp", headerName: "CRP", width: 150, editable: true },
+	{ field: "type", headerName: "Tipo", width: 150, editable: true },
 	{
-		field: "guideId",
-		headerName: "Nº Guia",
+		field: "financeBank",
+		headerName: "Banco",
 		width: 150,
 		editable: true,
 		valueGetter: (params) => {
 			if (params.value !== undefined) return params.value;
-			return params.row.guide.id;
+			return params.row.finance.bank;
 		},
 	},
 	{
-		field: "guideValue",
-		headerName: "Saldo",
+		field: "financeAgency",
+		headerName: "Agencia",
 		width: 150,
 		editable: true,
 		valueGetter: (params) => {
 			if (params.value !== undefined) return params.value;
-			return params.row.guide.value;
+			return params.row.finance.agency;
 		},
 	},
+	{
+		field: "Account",
+		headerName: "Conta",
+		width: 150,
+		editable: true,
+		valueGetter: (params) => {
+			if (params.value !== undefined) return params.value;
+			return params.row.finance.account;
+		},
+	},
+	{ field: "pix", headerName: "PIX", width: 150, editable: true },
+	{ field: "obs", headerName: "Observação", width: 300, editable: true },
 ];
 
 const useStyles = makeStyles({
@@ -106,8 +106,8 @@ const useStyles = makeStyles({
 	},
 });
 
-export default function Pacientes() {
-	const localStorageName = "deleteUser";
+export default function Locatarios() {
+	const localStorageName = "deleteTenant";
 
 	const [Rows, setRows] = useState([]);
 	const [Loading, setLoading] = useState(false);
@@ -120,17 +120,19 @@ export default function Pacientes() {
 	const [Snack, setSnack] = useState(false);
 	const [Name, setName] = useState("");
 	const [Rg, setRg] = useState("");
-	const [Birthday, setBirthday] = useState("");
-	const [Contact, setContact] = useState("");
-	const [Address, setAddress] = useState("");
-	const [Cep, setCep] = useState("");
-	const [GuideId, setGuideId] = useState("");
-	const [GuideValue, setGuideValue] = useState(10);
+	const [Email, setEmail] = useState("");
+	const [Crp, setCrp] = useState("");
+	const [Type, setType] = useState("");
+	const [financeBank, setfinanceBank] = useState("");
+	const [financeAgency, setfinanceAgency] = useState("");
+	const [financeAccount, setfinanceAccount] = useState("");
+	const [Pix, setPix] = useState("");
+	const [Obs, setObs] = useState("");
 
 	useEffect(() => {
 		setRows([]);
 		setLoading(true);
-		getPatient((e) => {
+		getTenant((e) => {
 			console.log(e);
 			setRows(e);
 			setLoading(false);
@@ -142,7 +144,7 @@ export default function Pacientes() {
 			<GridToolbarContainer>
 				<GridToolbarExport
 					csvOptions={{
-						fields: ["name", "birthday", "contact", "address", "cep", "rg"],
+						//fields: ["name", "birthday", "contact", "address", "cep", "rg"],
 						delimiter: ";",
 					}}
 				/>
@@ -165,7 +167,7 @@ export default function Pacientes() {
 					color="primary"
 					startIcon={<DeleteIcon />}
 					onClick={() => {
-						handleDeleteUser();
+						handleDeleteTenant();
 					}}
 				>
 					Deletar
@@ -177,17 +179,17 @@ export default function Pacientes() {
 	function handleAddUser(ev) {
 		ev.preventDefault();
 		setOpen(false);
-		createPatient(
+		createTenant(
 			(e) => {
 				if (e?.data) {
-					getPatient((e) => {
+					getTenant((e) => {
 						console.log(e);
 						setRows(e);
 						setLoading(false);
 					});
 					console.log(e.data);
 				} else {
-					if (e.response.data.message === "RG já cadastrado porém deletado") {
+					if (e.response.data.message === "Usuário já existente e deletado") {
 						setErr3(true);
 					} else {
 						setErr4(true);
@@ -197,19 +199,21 @@ export default function Pacientes() {
 			{
 				name: Name,
 				rg: Rg,
-				birthday: Birthday,
-				contact: Contact,
-				address: Address,
-				cep: Cep,
-				guide: {
-					id: GuideId,
-					value: GuideValue,
+				email: Email,
+				crp: Crp,
+				type: Type,
+				finance: {
+					bank: financeBank,
+					agency: financeAgency,
+					account: financeAccount,
 				},
+				pix: Pix,
+				obs: Obs,
 			}
 		);
 	}
 
-	function handleDeleteUser() {
+	function handleDeleteTenant() {
 		preDeleteItem(
 			Rows,
 			setRows,
@@ -221,12 +225,12 @@ export default function Pacientes() {
 		);
 	}
 
-	function deleteUser() {
+	function _deleteTenant() {
 		deleteItem(
 			Rows,
 			setRows,
 			Selected,
-			deletePatient,
+			deleteTenant,
 			localStorageName,
 			setErr2
 		);
@@ -235,7 +239,7 @@ export default function Pacientes() {
 	const classes = useStyles();
 
 	return (
-		<div className={"pacientes-container " + classes.root}>
+		<div className={"tenant-container " + classes.root}>
 			<div>
 				<Dialog
 					open={Open}
@@ -244,10 +248,10 @@ export default function Pacientes() {
 					}}
 				>
 					<form onSubmit={handleAddUser}>
-						<DialogTitle>Adicionar Paciente</DialogTitle>
+						<DialogTitle>Adicionar Colaborador</DialogTitle>
 						<DialogContent>
 							<DialogContentText>
-								Para adicionar um paciente complete os campos abaixo com as
+								Para adicionar um colaborador complete os campos abaixo com as
 								informações requeridas.
 							</DialogContentText>
 							<div className="user-input-outter">
@@ -275,68 +279,99 @@ export default function Pacientes() {
 								/>
 								<TextField
 									className="add-user-input"
-									id="Aniversario"
-									label="Aniversário"
+									id="Email"
+									label="Email"
 									variant="outlined"
 									type="text"
 									required
 									onChange={(e) => {
-										setBirthday(e.target.value);
+										setEmail(e.target.value);
 									}}
 								/>
 								<TextField
 									className="add-user-input"
-									id="Contato"
-									label="Contato"
+									id="CRP"
+									label="CRP"
 									variant="outlined"
 									type="text"
 									required
 									onChange={(e) => {
-										setContact(e.target.value);
+										setCrp(e.target.value);
+									}}
+								/>
+
+								<FormControl variant="outlined" Style="width:212px;">
+									<InputLabel id="Tipo">Tipo</InputLabel>
+									<Select
+										labelId="Tipo"
+										id="Tipo"
+										value={Type}
+										onChange={(e) => setType(e.target.value)}
+										label="Tipo"
+										variant="outlined"
+										className="add-user-input"
+									>
+										<MenuItem value="" disabled>
+											<em>Selecione</em>
+										</MenuItem>
+										<MenuItem value="tenant">Locatário</MenuItem>
+										<MenuItem value="secretary">Secretário</MenuItem>
+										<MenuItem value="adm">Administrador</MenuItem>
+									</Select>
+								</FormControl>
+
+								<TextField
+									className="add-user-input"
+									id="Banco"
+									label="Banco"
+									variant="outlined"
+									type="text"
+									required
+									onChange={(e) => {
+										setfinanceBank(e.target.value);
 									}}
 								/>
 								<TextField
 									className="add-user-input"
-									id="Endereco"
-									label="Endereço"
+									id="Agencia"
+									label="Agencia"
 									variant="outlined"
 									type="text"
 									required
 									onChange={(e) => {
-										setAddress(e.target.value);
+										setfinanceAgency(e.target.value);
 									}}
 								/>
 								<TextField
 									className="add-user-input"
-									id="CEP"
-									label="CEP"
+									id="Conta"
+									label="Conta"
 									variant="outlined"
 									type="text"
 									required
 									onChange={(e) => {
-										setCep(e.target.value);
+										setfinanceAccount(e.target.value);
 									}}
 								/>
 								<TextField
 									className="add-user-input"
-									id="IDdaGuia"
-									label="ID da Guia"
+									id="PIX"
+									label="PIX"
 									variant="outlined"
 									type="text"
 									required
 									onChange={(e) => {
-										setGuideId(e.target.value);
+										setPix(e.target.value);
 									}}
 								/>
 								<TextField
 									className="add-user-input"
-									id="ValordeGuias"
-									label="Valor de Guias"
+									id="Observacao"
+									label="Observação"
 									variant="outlined"
 									type="text"
-									required
 									onChange={(e) => {
-										setGuideValue(e.target.value);
+										setObs(e.target.value);
 									}}
 								/>
 							</div>
@@ -363,9 +398,9 @@ export default function Pacientes() {
 					onClose={(e, r) => {
 						if (r === "clickaway") return;
 						setSnack(false);
-						deleteUser();
+						_deleteTenant();
 					}}
-					message="Paciente deletado"
+					message="Colaborador deletado"
 					action={
 						<>
 							<Button
@@ -385,7 +420,7 @@ export default function Pacientes() {
 								onClick={(e, r) => {
 									if (r === "clickaway") return;
 									setSnack(false);
-									deleteUser();
+									_deleteTenant();
 								}}
 							>
 								<CloseIcon fontSize="small" />
@@ -402,7 +437,7 @@ export default function Pacientes() {
 					}}
 				>
 					<Alert variant="filled" severity="error">
-						Esse paciente já está registrado.
+						Esse colaborador já está registrado.
 					</Alert>
 				</Snackbar>
 				<Snackbar
@@ -422,7 +457,7 @@ export default function Pacientes() {
 								size="small"
 								onClick={(e, r) => {
 									if (r === "clickaway") return;
-									deleteUndoPatient(window.location.reload(), { rg: Rg });
+									deleteUndoTenant(window.location.reload(), { rg: Rg });
 								}}
 							>
 								RESTAURAR
@@ -484,10 +519,7 @@ export default function Pacientes() {
 					disableSelectionOnClick
 					isRowSelectable={(params) => params.row.state !== "deleted"}
 					onCellEditCommit={(e) => {
-						//console.log(e.value);
-						//console.log(e.id);
-						//console.log(e.field);
-						editUser(console.log, { [e.field]: e.value }, e.id);
+						editTenant(console.log, { [e.field]: e.value }, e.id);
 					}}
 					getRowClassName={(e) => {
 						if (e.row.state === "deleted") return "disabled";

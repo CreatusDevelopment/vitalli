@@ -9,7 +9,21 @@ import { Provider } from "react-redux";
 import axios from "axios";
 
 axios.defaults.baseURL = "https://creatus.net.br:5000/";
-axios.defaults.headers.common["Authorization"] = localStorage.getItem("token");
+
+const itemStr = localStorage.getItem("token");
+const item = JSON.parse(itemStr);
+if (itemStr) {
+	const now = new Date();
+	if (now.getTime() > item.expiry) {
+		localStorage.removeItem("token");
+		localStorage.removeItem("isLogged");
+	} else {
+		axios.defaults.headers.common["Authorization"] = item.value;
+		setTimeout(() => {
+			window.location.reload();
+		}, 86400 * 1000);
+	}
+}
 
 const store = createStore(
 	allReducers,
