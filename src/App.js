@@ -8,6 +8,7 @@ import {
 	Login,
 	Esqueci_a_senha,
 	Redefinir,
+	Planos_de_Saude,
 } from "./views";
 import { useSelector } from "react-redux";
 
@@ -24,6 +25,7 @@ function App() {
 						<Route path="/pacientes" component={Pacientes} exact />
 						<Route path="/locatarios" component={Locatarios} exact />
 						<Route path="/financeiro" component={Financeiro} exact />
+						<Route path="/planos" component={Planos_de_Saude} exact />
 						<Route path="/" component={Calendario} />
 					</Switch>
 				</div>

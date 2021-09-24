@@ -6,7 +6,7 @@ export default function getFinance(callback, params = undefined) {
 		url: "/finance/find?" + params,
 	})
 		.then((response) => {
-			callback(response.data);
+			callback(response);
 		})
 		.catch((error) => {
 			console.log(error);

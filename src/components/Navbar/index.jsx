@@ -6,6 +6,7 @@ import {
 	faUser,
 	faWallet,
 	faSignOutAlt,
+	faHospital,
 } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 import "./style.scss";
@@ -49,15 +50,15 @@ export default function Navbar(props) {
 					icon={faCalendar}
 					linkref={Active}
 				/>
-				{localStorage.getItem("use_type") === "adm" ||
-					(localStorage.getItem("use_type") === "secretary" && (
-						<Item
-							title="Pacientes"
-							link="/pacientes"
-							icon={faBook}
-							linkref={Active}
-						/>
-					))}
+				{(localStorage.getItem("use_type") === "adm" ||
+					localStorage.getItem("use_type") === "secretary") && (
+					<Item
+						title="Pacientes"
+						link="/pacientes"
+						icon={faBook}
+						linkref={Active}
+					/>
+				)}
 				{localStorage.getItem("use_type") === "adm" && (
 					<Item
 						title="Locatários"
@@ -71,6 +72,14 @@ export default function Navbar(props) {
 						title="Financeiro"
 						link="/financeiro"
 						icon={faWallet}
+						linkref={Active}
+					/>
+				)}
+				{localStorage.getItem("use_type") === "adm" && (
+					<Item
+						title="Planos de Saúde"
+						link="/planos"
+						icon={faHospital}
 						linkref={Active}
 					/>
 				)}

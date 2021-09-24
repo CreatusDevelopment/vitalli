@@ -4,39 +4,15 @@ import {
 	ThemeProvider,
 	makeStyles,
 } from "@material-ui/core/styles";
-import {
-	CalendarToday,
-	Close as CloseIcon,
-	Add as AddIcon,
-} from "@material-ui/icons";
+import { CalendarToday } from "@material-ui/icons";
 import {
 	DataGrid,
 	GridToolbarContainer,
 	GridToolbarExport,
 	ptBR,
 } from "@mui/x-data-grid";
-import {
-	getFinance,
-	createPatient,
-	deletePatient,
-	preDeleteItem,
-	deleteItem,
-	undoPreDelete,
-	editUser,
-	deleteUndoPatient,
-} from "../../functions";
-import {
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	TextField,
-	Button,
-	Snackbar,
-	IconButton,
-} from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
+import { getFinance } from "../../functions";
+import { Button } from "@material-ui/core";
 import DateFnsUtils from "@date-io/date-fns";
 import brLocale from "date-fns/locale/pt-BR";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
@@ -116,16 +92,20 @@ export default function Financeiro() {
 	const [Selected, setSelected] = useState([]);
 	const [OpenStart, setOpenStart] = useState(false);
 	const [OpenEnd, setOpenEnd] = useState(false);
-	const [value, setValue] = React.useState(new Date());
 	const [Start, setStart] = useState(new Date());
 	const [End, setEnd] = useState(new Date());
+	const [flag, setflag] = useState(false);
+
 	useEffect(() => {
 		let date = new Date();
+		console.log(date);
 		let start =
 			date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
+		console.log(start);
 
 		let end =
 			date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+		console.log(end);
 
 		setStart(new Date(date));
 		date.setMonth(date.getMonth() + 1);
@@ -134,24 +114,33 @@ export default function Financeiro() {
 		setRows([]);
 		setLoading(true);
 		getFinance((e) => {
+			if (e?.data) {
+				setRows(e.data);
+			}
 			console.log(e);
-			setRows(e);
 			setLoading(false);
+			setflag(true);
 		}, "start=" + start + "&end=" + end);
 	}, []);
 
 	useEffect(() => {
-		let start =
-			Start.getDate() + "/" + Start.getMonth() + "/" + Start.getFullYear();
+		if (flag) {
+			let start =
+				Start.getDate() + "/" + Start.getMonth() + "/" + Start.getFullYear();
 
-		let end = End.getDate() + "/" + End.getMonth() + "/" + End.getFullYear();
-		setLoading(true);
-		setRows([]);
-		getFinance((e) => {
-			console.log(e);
-			setRows(e);
-			setLoading(false);
-		}, "start=" + start + "&end=" + end);
+			let end = End.getDate() + "/" + End.getMonth() + "/" + End.getFullYear();
+
+			console.log(start);
+			console.log(end);
+
+			setLoading(true);
+			setRows([]);
+			getFinance((e) => {
+				console.log(e.data);
+				setRows(e.data);
+				setLoading(false);
+			}, "start=" + start + "&end=" + end);
+		}
 	}, [Start, End]);
 
 	function CustomToolbar() {

@@ -9,8 +9,11 @@ import deleteUndoPatient from "./deleteUndoPatient";
 import createTenant from "./createTenant";
 import editTenant from "./editTenant";
 import deleteUndoTenant from "./deleteUndoTenant";
-
+import createHealthPlan from "./createHealthPlan";
+import editHealthPlan from "./editHealthPlan";
 export {
+	editHealthPlan,
+	createHealthPlan,
 	editUser,
 	confirmSchedule,
 	createSchedule,

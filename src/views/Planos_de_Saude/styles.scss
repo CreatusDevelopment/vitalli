@@ -1,0 +1,6 @@
+@import "../../style/mesures.scss";
+@import "../../style/colors.scss";
+
+.planos-container {
+	width: calc(100vw - #{$nav-width});
+}

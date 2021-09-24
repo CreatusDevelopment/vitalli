@@ -95,6 +95,8 @@ const timeSlots = Array.from(new Array(24 * 2)).map(
 		}`
 );
 
+const newTimeSlots = timeSlots.slice(8, timeSlots.length - 7);
+
 const useStyles = makeStyles({
 	root: {
 		"& .confirmed": {
@@ -231,6 +233,7 @@ export default function Calendario() {
 	}, []);
 
 	useEffect(() => {
+		console.log("mandei");
 		setDayInfo([]);
 		setLoading(true);
 		setScheduleId([]);
@@ -239,7 +242,7 @@ export default function Calendario() {
 				setDayInfo(e);
 				setLoading(false);
 			},
-			{ date: value, tenant: TenantID }
+			{ date: value, tenant: TenantID === "" ? undefined : TenantID }
 		);
 	}, [value, TenantID]);
 
@@ -248,7 +251,10 @@ export default function Calendario() {
 		createSchedule(
 			function (e) {
 				if (e?.data) {
-					getSchedule(setDayInfo, { date: value });
+					getSchedule(setDayInfo, {
+						date: value,
+						tenant: TenantID === "" ? undefined : TenantID,
+					});
 				} else {
 					setSnackErr3Message(e.response.data.message);
 					setSnackErr3(true);
@@ -261,6 +267,7 @@ export default function Calendario() {
 				patient: SendPatient,
 				type: Consulta ? "consultation" : "session",
 				day: Recorrente ? RecorrentData : null,
+				tenant: TenantID === "" ? undefined : TenantID,
 			}
 		);
 	}
@@ -348,139 +355,131 @@ export default function Calendario() {
 				</Snackbar>
 			</div>
 			<div className="calendar-inner">
-				{localStorage.getItem("use_type") === "adm" ||
-					(localStorage.getItem("use_type") === "secretary" && (
-						<div className="new-apoint">
-							<form
-								className="outter-form"
-								onSubmit={(e) => {
-									handleSubmit(e);
-								}}
-							>
-								<p className="title">Nova {Consulta ? "Consulta" : "Sessão"}</p>
-								<div>
-									<FormControlLabel
-										control={
-											<Switch
-												checked={Recorrente}
-												color="primary"
-												onChange={() => {
-													setRecorrente((prev) => !prev);
-												}}
-												disabled={Consulta}
+				{(localStorage.getItem("use_type") === "adm" ||
+					localStorage.getItem("use_type") === "secretary") && (
+					<div className="new-apoint">
+						<form
+							className="outter-form"
+							onSubmit={(e) => {
+								handleSubmit(e);
+							}}
+						>
+							<p className="title">Nova {Consulta ? "Consulta" : "Sessão"}</p>
+							<div>
+								<FormControlLabel
+									control={
+										<Switch
+											checked={Recorrente}
+											color="primary"
+											onChange={() => {
+												setRecorrente((prev) => !prev);
+											}}
+											disabled={Consulta}
+										/>
+									}
+									label="Evento Recorrente"
+								/>
+								<FormControlLabel
+									control={
+										<Checkbox
+											checked={Consulta}
+											onChange={(event) => {
+												setConsulta(event.target.checked);
+											}}
+											name="sessao"
+											color="primary"
+										/>
+									}
+									label="Consulta"
+								/>
+							</div>
+							{Recorrente && (
+								<div className="recorrente-div">
+									<Autocomplete
+										className="input"
+										onChange={(event, value) => setRecorrentData(value?.nome)}
+										id="semana-de-repeticao"
+										options={repeatWeek}
+										getOptionLabel={(option) => option.nome}
+										renderInput={(params) => (
+											<TextField
+												{...params}
+												label="Repetir todo(a)..."
+												variant="outlined"
 											/>
-										}
-										label="Evento Recorrente"
-									/>
-									<FormControlLabel
-										control={
-											<Checkbox
-												checked={Consulta}
-												onChange={(event) => {
-													setConsulta(event.target.checked);
-												}}
-												name="sessao"
-												color="primary"
-											/>
-										}
-										label="Consulta"
+										)}
 									/>
 								</div>
-								{Recorrente && (
-									<div className="recorrente-div">
-										<Autocomplete
-											className="input"
-											onChange={(event, value) => setRecorrentData(value?.nome)}
-											id="semana-de-repeticao"
-											options={repeatWeek}
-											getOptionLabel={(option) => option.nome}
-											renderInput={(params) => (
-												<TextField
-													{...params}
-													label="Repetir todo(a)..."
-													variant="outlined"
-												/>
-											)}
-										/>
-									</div>
-								)}
+							)}
 
-								<Autocomplete
-									className="input"
-									onChange={(event, value) => setSendPatient(value?._id)}
-									id="nome-paciente"
-									options={Patinet}
-									getOptionLabel={(option) => option.name}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											label="Paciente"
-											variant="outlined"
-										/>
-									)}
-								/>
-
-								<Autocomplete
-									className="input"
-									id="disabled-options-demo"
-									onChange={(event, value) => setHour(value)}
-									options={timeSlots}
-									getOptionDisabled={(option) => {
-										for (let i = 0; i < DayInfo.length; i++) {
-											if (option === DayInfo[i].start) {
-												return true;
-											}
-										}
-									}}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											label="Horário de inicio"
-											variant="outlined"
-										/>
-									)}
-								/>
-
-								<Autocomplete
-									className="input"
-									onChange={(event, value) => setSendHealth(value?._id)}
-									id="convenio"
-									options={HealthPlan}
-									getOptionLabel={(option) => option.name}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											label="Convenios"
-											variant="outlined"
-										/>
-									)}
-								/>
-
-								<Button
-									className="input button"
-									variant="contained"
-									type="submit"
-								>
-									Enviar
-								</Button>
-							</form>
-						</div>
-					))}
-				<div className="calendar" Style="display:flex; flex-direction: column;">
-					{localStorage.getItem("use_type") === "adm" ||
-						(localStorage.getItem("use_type") === "secretary" && (
 							<Autocomplete
-								Style="width:350px;"
 								className="input"
-								onChange={(event, value) => setTenantID(value?._id)}
-								id="nome-locatario"
-								options={Tenant}
+								onChange={(event, value) => setSendPatient(value?._id)}
+								id="nome-paciente"
+								options={Patinet}
 								getOptionLabel={(option) => option.name}
 								renderInput={(params) => (
-									<TextField {...params} label="Locatário" variant="outlined" />
+									<TextField {...params} label="Paciente" variant="outlined" />
 								)}
 							/>
-						))}
+
+							<Autocomplete
+								className="input"
+								id="disabled-options-demo"
+								onChange={(event, value) => setHour(value)}
+								options={newTimeSlots}
+								getOptionDisabled={(option) => {
+									for (let i = 0; i < DayInfo.length; i++) {
+										if (option === DayInfo[i].start) {
+											return true;
+										}
+									}
+								}}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										label="Horário de inicio"
+										variant="outlined"
+									/>
+								)}
+							/>
+
+							<Autocomplete
+								className="input"
+								onChange={(event, value) => setSendHealth(value?._id)}
+								id="convenio"
+								options={HealthPlan}
+								getOptionLabel={(option) => option.name}
+								renderInput={(params) => (
+									<TextField {...params} label="Convenios" variant="outlined" />
+								)}
+							/>
+
+							<Button
+								className="input button"
+								variant="contained"
+								type="submit"
+							>
+								Enviar
+							</Button>
+						</form>
+					</div>
+				)}
+				<div className="calendar" Style="display:flex; flex-direction: column;">
+					{(localStorage.getItem("use_type") === "adm" ||
+						localStorage.getItem("use_type") === "secretary") && (
+						<Autocomplete
+							Style="width:350px;"
+							className="input"
+							onChange={(event, value) => setTenantID(value?._id)}
+							id="nome-locatario"
+							options={Tenant}
+							getOptionLabel={(option) => option.name}
+							renderInput={(params) => (
+								<TextField {...params} label="Locatário" variant="outlined" />
+							)}
+						/>
+					)}
 					<Calendar
 						onChange={(e) => {
 							// console.log(e);
