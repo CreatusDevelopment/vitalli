@@ -4,11 +4,7 @@ import {
 	ThemeProvider,
 	makeStyles,
 } from "@material-ui/core/styles";
-import {
-	Delete as DeleteIcon,
-	Close as CloseIcon,
-	Add as AddIcon,
-} from "@material-ui/icons";
+import { Add as AddIcon } from "@material-ui/icons";
 import {
 	DataGrid,
 	GridToolbarContainer,
@@ -16,14 +12,6 @@ import {
 	ptBR,
 } from "@mui/x-data-grid";
 import {
-	getPatient,
-	createPatient,
-	deletePatient,
-	preDeleteItem,
-	deleteItem,
-	undoPreDelete,
-	editUser,
-	deleteUndoPatient,
 	getHealthPlan,
 	createHealthPlan,
 	editHealthPlan,
@@ -37,7 +25,6 @@ import {
 	TextField,
 	Button,
 	Snackbar,
-	IconButton,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import "./styles.scss";
@@ -90,7 +77,6 @@ export default function Planos_de_Saude() {
 	const [Open, setOpen] = useState(false);
 	const [Selected, setSelected] = useState([]);
 	const [Err4, setErr4] = useState(false);
-	const [Snack, setSnack] = useState(false);
 	const [Name, setName] = useState("");
 	const [ValorC, setValorC] = useState("");
 	const [ValorS, setValorS] = useState("");

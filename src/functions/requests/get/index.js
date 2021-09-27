@@ -3,5 +3,15 @@ import getPatient from "./getPatient";
 import getSchedule from "./getSchedule";
 import getTenant from "./getTenant";
 import getFinance from "./getFinance";
+import getFinanceTenant from "./getFinanceTenant";
+import getFinanceHP from "./getFinanceHP";
 
-export { getHealthPlan, getPatient, getSchedule, getTenant, getFinance };
+export {
+	getFinanceHP,
+	getHealthPlan,
+	getPatient,
+	getSchedule,
+	getTenant,
+	getFinance,
+	getFinanceTenant,
+};
