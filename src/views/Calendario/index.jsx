@@ -95,7 +95,7 @@ const timeSlots = Array.from(new Array(24 * 2)).map(
 		}`
 );
 
-const newTimeSlots = timeSlots.slice(8, timeSlots.length - 7);
+const newTimeSlots = timeSlots.slice(8, timeSlots?.length - 7);
 
 const useStyles = makeStyles({
 	root: {
@@ -163,8 +163,8 @@ export default function Calendario() {
 		_confirmSchedule(
 			function (e) {
 				if (e?.data) {
-					for (let i = 0; i < DayInfo.length; i++) {
-						for (let j = 0; j < ScheduleId.length; j++) {
+					for (let i = 0; i < DayInfo?.length; i++) {
+						for (let j = 0; j < ScheduleId?.length; j++) {
 							if (DayInfo[i].id === ScheduleId[j]) {
 								let copy = DayInfo.slice();
 								copy[i].state = "confirmed";
@@ -429,8 +429,8 @@ export default function Calendario() {
 								onChange={(event, value) => setHour(value)}
 								options={newTimeSlots}
 								getOptionDisabled={(option) => {
-									for (let i = 0; i < DayInfo.length; i++) {
-										if (option === DayInfo[i].start) {
+									for (let i = 0; i < DayInfo?.length; i++) {
+										if (option === DayInfo[i]?.start) {
 											return true;
 										}
 									}
