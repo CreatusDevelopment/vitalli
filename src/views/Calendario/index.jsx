@@ -148,6 +148,7 @@ export default function Calendario() {
 			setSnackUndo,
 			localStorageName
 		);
+		deleteSchedule();
 	}
 	function deleteSchedule() {
 		deleteItem(
@@ -276,7 +277,7 @@ export default function Calendario() {
 		<div className="calendar-container">
 			<div>
 				<Snackbar
-					open={SnackUndo}
+					open={false}
 					autoHideDuration={6000}
 					onClose={(e, r) => {
 						if (r === "clickaway") return;
