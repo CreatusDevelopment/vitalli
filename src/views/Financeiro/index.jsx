@@ -343,6 +343,9 @@ export default function Financeiro() {
 			{
 				field: "value",
 				headerName: "Valor",
+				valueFormatter: (params) => {
+					return `R$ ${params.value}`;
+				},
 				width: 150,
 			},
 		]);
@@ -371,6 +374,9 @@ export default function Financeiro() {
 			{
 				field: "value",
 				headerName: "Valor",
+				valueFormatter: (params) => {
+					return `R$ ${params.value}`;
+				},
 				width: 150,
 			},
 		]);
@@ -509,8 +515,8 @@ export default function Financeiro() {
 					}}
 					rows={Rows}
 					columns={columns}
-					pageSize={10}
-					rowsPerPageOptions={[10]}
+					pageSize={100}
+					rowsPerPageOptions={[10, 25, 50, 100, 200]}
 					selectionModel={Selected}
 					onSelectionModelChange={(e) => {
 						setSelected(e);

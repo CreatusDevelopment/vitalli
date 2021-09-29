@@ -45,6 +45,10 @@ const columns = [
 		headerName: "Valor Consulta",
 		width: 200,
 		editable: true,
+		type: "number",
+		valueFormatter: (params) => {
+			return `R$ ${params.value}`;
+		},
 		valueGetter: (params) => {
 			if (params.value !== undefined) return params.value;
 			return params.row.values.consultation;
@@ -53,8 +57,12 @@ const columns = [
 	{
 		field: "session",
 		headerName: "Valor Sessão",
+		type: "number",
 		width: 200,
 		editable: true,
+		valueFormatter: (params) => {
+			return `R$ ${params.value}`;
+		},
 		valueGetter: (params) => {
 			if (params.value !== undefined) return params.value;
 			return params.row.values.session;
@@ -234,8 +242,8 @@ export default function Planos_de_Saude() {
 					}}
 					rows={Rows}
 					columns={columns}
-					pageSize={10}
-					rowsPerPageOptions={[10]}
+					pageSize={100}
+					rowsPerPageOptions={[10, 25, 50, 100, 200]}
 					selectionModel={Selected}
 					onSelectionModelChange={(e) => {
 						setSelected(e);

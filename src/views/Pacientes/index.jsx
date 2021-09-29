@@ -53,8 +53,16 @@ const columns = [
 	{
 		field: "birthday",
 		headerName: "Nascimento",
+		type: "date",
 		width: 160,
 		editable: true,
+	},
+	{
+		field: "rg",
+		headerName: "RG",
+		width: 150,
+		editable: true,
+		type: "number",
 	},
 	{
 		field: "contact",
@@ -68,13 +76,14 @@ const columns = [
 		width: 150,
 		editable: true,
 	},
-	{ field: "cep", headerName: "CEP", width: 150, editable: true },
 	{
-		field: "rg",
-		headerName: "RG",
+		field: "cep",
+		headerName: "CEP",
 		width: 150,
 		editable: true,
+		type: "number",
 	},
+
 	{
 		field: "guideId",
 		headerName: "Nº Guia",
@@ -90,6 +99,7 @@ const columns = [
 		headerName: "Saldo",
 		width: 150,
 		editable: true,
+		type: "number",
 		valueGetter: (params) => {
 			if (params.value !== undefined) return params.value;
 			return params.row.guide.value;
@@ -267,7 +277,7 @@ export default function Pacientes() {
 									id="RG"
 									label="RG"
 									variant="outlined"
-									type="text"
+									type="number"
 									required
 									onChange={(e) => {
 										setRg(e.target.value);
@@ -275,10 +285,9 @@ export default function Pacientes() {
 								/>
 								<TextField
 									className="add-user-input"
-									id="Aniversario"
-									label="Aniversário"
+									id="Nascimento"
 									variant="outlined"
-									type="text"
+									type="date"
 									required
 									onChange={(e) => {
 										setBirthday(e.target.value);
@@ -311,7 +320,7 @@ export default function Pacientes() {
 									id="CEP"
 									label="CEP"
 									variant="outlined"
-									type="text"
+									type="number"
 									required
 									onChange={(e) => {
 										setCep(e.target.value);
@@ -333,7 +342,7 @@ export default function Pacientes() {
 									id="ValordeGuias"
 									label="Valor de Guias"
 									variant="outlined"
-									type="text"
+									type="number"
 									required
 									onChange={(e) => {
 										setGuideValue(e.target.value);
@@ -474,8 +483,8 @@ export default function Pacientes() {
 					}}
 					rows={Rows}
 					columns={columns}
-					pageSize={10}
-					rowsPerPageOptions={[10]}
+					pageSize={100}
+					rowsPerPageOptions={[10, 25, 50, 100, 200]}
 					selectionModel={Selected}
 					onSelectionModelChange={(e) => {
 						setSelected(e);

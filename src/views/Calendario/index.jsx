@@ -499,8 +499,8 @@ export default function Calendario() {
 						}}
 						rows={DayInfo}
 						columns={columns}
-						pageSize={10}
-						rowsPerPageOptions={[10]}
+						pageSize={100}
+						rowsPerPageOptions={[10, 25, 50, 100, 200]}
 						checkboxSelection
 						disableSelectionOnClick
 						selectionModel={ScheduleId}

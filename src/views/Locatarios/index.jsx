@@ -59,10 +59,31 @@ const columns = [
 		headerName: "RG",
 		width: 150,
 		editable: true,
+		type: "number",
 	},
 	{ field: "email", headerName: "Email", width: 150, editable: true },
 	{ field: "crp", headerName: "CRP", width: 150, editable: true },
-	{ field: "type", headerName: "Tipo", width: 150, editable: true },
+	{
+		field: "type",
+		headerName: "Tipo",
+		width: 150,
+		valueGetter: (params) => {
+			if (params.value !== undefined) {
+				//return params.value;
+
+				if (params.value === "adm") {
+					return "Administrador";
+				}
+				if (params.value === "tenant") {
+					return "Locatário";
+				}
+				if (params.value === "secretary") {
+					return "Secretário";
+				}
+				return "Tipo Indefinido";
+			} else return "error";
+		},
+	},
 	{
 		field: "financeBank",
 		headerName: "Banco",
@@ -271,7 +292,7 @@ export default function Locatarios() {
 									id="RG"
 									label="RG"
 									variant="outlined"
-									type="text"
+									type="number"
 									required
 									onChange={(e) => {
 										setRg(e.target.value);
@@ -282,7 +303,7 @@ export default function Locatarios() {
 									id="Email"
 									label="Email"
 									variant="outlined"
-									type="text"
+									type="email"
 									required
 									onChange={(e) => {
 										setEmail(e.target.value);
@@ -509,8 +530,8 @@ export default function Locatarios() {
 					}}
 					rows={Rows}
 					columns={columns}
-					pageSize={10}
-					rowsPerPageOptions={[10]}
+					pageSize={100}
+					rowsPerPageOptions={[10, 25, 50, 100, 200]}
 					selectionModel={Selected}
 					onSelectionModelChange={(e) => {
 						setSelected(e);
