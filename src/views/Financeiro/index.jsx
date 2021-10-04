@@ -70,7 +70,6 @@ export default function Financeiro() {
 	const [HealthPlan, setHealthPlan] = useState([]);
 	const [ActiveHP, setActiveHP] = useState("");
 	const [openHP, setopenHP] = useState(false);
-	const [TotalValue, setTotalValue] = useState(0);
 
 	const [columns, setcolumns] = useState([
 		{ field: "name", headerName: "Nome", width: 250 },

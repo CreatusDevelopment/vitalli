@@ -31,7 +31,8 @@ export default function Navbar(props) {
 		<nav className="sidebar-nav">
 			<div className="logo-picture-container">
 				<div className="logo-container">
-					<h1 className="logo">VP</h1>
+					{/* <h1 className="logo">VP</h1> */}
+					<img Style="width:50px;" src="/brass.png" alt="Vitalli Psicologia" />
 				</div>
 				<div className="person-container">
 					<h3 className="person-name">{name}</h3>

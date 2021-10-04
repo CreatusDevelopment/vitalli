@@ -56,6 +56,14 @@ const columns = [
 		type: "date",
 		width: 160,
 		editable: true,
+		valueFormatter: (params) => {
+			let date = new Date(params.value);
+			return `${date.getDate() < 10 ? "0" + date.getDate() : date.getDate()}/${
+				+date.getMonth() + 1 < 10
+					? "0" + (+date.getMonth() + 1)
+					: +date.getMonth() + 1
+			}/${date.getFullYear()}`;
+		},
 	},
 	{
 		field: "rg",
@@ -284,6 +292,7 @@ export default function Pacientes() {
 									}}
 								/>
 								<TextField
+									Style="width:223px;"
 									className="add-user-input"
 									id="Nascimento"
 									variant="outlined"
@@ -339,8 +348,8 @@ export default function Pacientes() {
 								/>
 								<TextField
 									className="add-user-input"
-									id="ValordeGuias"
-									label="Valor de Guias"
+									id="Saldo"
+									label="Saldo"
 									variant="outlined"
 									type="number"
 									required

@@ -63,8 +63,8 @@ export default function Login() {
 				</Alert>
 			</Collapse>
 			<div className="logo-container">
-				{/* <img className="logo" src="/logo.png" alt="Vitalli Psicologia" /> */}
-				<h1>Clinica de Psicologia</h1>
+				<img className="logo" src="/logo.png" alt="Vitalli Psicologia" />
+				{/* <h1>Clinica de Psicologia</h1> */}
 			</div>
 			<form className="form-container" onSubmit={handleSubmit}>
 				<TextField

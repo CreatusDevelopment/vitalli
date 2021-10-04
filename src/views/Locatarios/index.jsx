@@ -269,10 +269,10 @@ export default function Locatarios() {
 					}}
 				>
 					<form onSubmit={handleAddUser}>
-						<DialogTitle>Adicionar Colaborador</DialogTitle>
+						<DialogTitle>Adicionar Locatário</DialogTitle>
 						<DialogContent>
 							<DialogContentText>
-								Para adicionar um colaborador complete os campos abaixo com as
+								Para adicionar um locatário complete os campos abaixo com as
 								informações requeridas.
 							</DialogContentText>
 							<div className="user-input-outter">
@@ -421,7 +421,7 @@ export default function Locatarios() {
 						setSnack(false);
 						_deleteTenant();
 					}}
-					message="Colaborador deletado"
+					message="Locatário deletado"
 					action={
 						<>
 							<Button
@@ -458,7 +458,7 @@ export default function Locatarios() {
 					}}
 				>
 					<Alert variant="filled" severity="error">
-						Esse colaborador já está registrado.
+						Esse locatário já está registrado.
 					</Alert>
 				</Snackbar>
 				<Snackbar
