@@ -86,15 +86,15 @@ export default function Planos_de_Saude() {
 	const [Selected, setSelected] = useState([]);
 	const [Err4, setErr4] = useState(false);
 	const [Name, setName] = useState("");
-	const [ValorC, setValorC] = useState("");
-	const [ValorS, setValorS] = useState("");
+	const [ValorC, setValorC] = useState("0.0");
+	const [ValorS, setValorS] = useState("0.0");
 
 	useEffect(() => {
 		setRows([]);
 		setLoading(true);
 		getHealthPlan((e) => {
 			let str = JSON.stringify(e);
-			let aux = JSON.parse(str.replace(/\"_id\":/g, '"id":'));
+			let aux = JSON.parse(str.replace(/"_id":/g, '"id":'));
 			console.log(e);
 			setRows(aux);
 			setLoading(false);
@@ -134,7 +134,7 @@ export default function Planos_de_Saude() {
 					getHealthPlan((e) => {
 						console.log(e);
 						let str = JSON.stringify(e);
-						let aux = JSON.parse(str.replace(/\"_id\":/g, '"id":'));
+						let aux = JSON.parse(str.replace(/"_id":/g, '"id":'));
 						setRows(aux);
 						setLoading(false);
 					});
@@ -187,6 +187,9 @@ export default function Planos_de_Saude() {
 									label="Valor Sessão"
 									variant="outlined"
 									type="number"
+									inputProps={{
+										step: "any",
+									}}
 									required
 									onChange={(e) => {
 										setValorS(e.target.value);
@@ -198,6 +201,9 @@ export default function Planos_de_Saude() {
 									label="Valor Consulta"
 									variant="outlined"
 									type="number"
+									inputProps={{
+										step: "any",
+									}}
 									required
 									onChange={(e) => {
 										setValorC(e.target.value);

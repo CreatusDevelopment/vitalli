@@ -54,8 +54,8 @@ export default function Navbar(props) {
 				{(localStorage.getItem("use_type") === "adm" ||
 					localStorage.getItem("use_type") === "secretary") && (
 					<Item
-						title="Pacientes"
-						link="/pacientes"
+						title="Clientes"
+						link="/clientes"
 						icon={faBook}
 						linkref={Active}
 					/>

@@ -73,6 +73,13 @@ const columns = [
 		type: "number",
 	},
 	{
+		field: "cpf",
+		headerName: "CPF",
+		width: 150,
+		editable: true,
+		type: "number",
+	},
+	{
 		field: "contact",
 		headerName: "Contato",
 		width: 150,
@@ -91,7 +98,18 @@ const columns = [
 		editable: true,
 		type: "number",
 	},
-
+	{
+		field: "ndp",
+		headerName: "Nome dos Pais",
+		width: 150,
+		editable: true,
+	},
+	{
+		field: "esc",
+		headerName: "Escolaridade",
+		width: 150,
+		editable: true,
+	},
 	{
 		field: "guideId",
 		headerName: "Nº Guia",
@@ -124,7 +142,7 @@ const useStyles = makeStyles({
 	},
 });
 
-export default function Pacientes() {
+export default function Clientes() {
 	const localStorageName = "deleteUser";
 
 	const [Rows, setRows] = useState([]);
@@ -144,6 +162,10 @@ export default function Pacientes() {
 	const [Cep, setCep] = useState("");
 	const [GuideId, setGuideId] = useState("");
 	const [GuideValue, setGuideValue] = useState(10);
+
+	const [ndp, setNdp] = useState("");
+	const [esc, setEsc] = useState("");
+	const [cpf, setCpf] = useState("");
 
 	useEffect(() => {
 		setRows([]);
@@ -223,6 +245,9 @@ export default function Pacientes() {
 					id: GuideId,
 					value: GuideValue,
 				},
+				cpf,
+				ndp,
+				esc,
 			}
 		);
 	}
@@ -262,10 +287,10 @@ export default function Pacientes() {
 					}}
 				>
 					<form onSubmit={handleAddUser}>
-						<DialogTitle>Adicionar Paciente</DialogTitle>
+						<DialogTitle>Adicionar Clientes</DialogTitle>
 						<DialogContent>
 							<DialogContentText>
-								Para adicionar um paciente complete os campos abaixo com as
+								Para adicionar um clientes complete os campos abaixo com as
 								informações requeridas.
 							</DialogContentText>
 							<div className="user-input-outter">
@@ -337,6 +362,39 @@ export default function Pacientes() {
 								/>
 								<TextField
 									className="add-user-input"
+									id="CPF"
+									label="CPF"
+									variant="outlined"
+									type="number"
+									required
+									onChange={(e) => {
+										setCpf(e.target.value);
+									}}
+								/>
+								<TextField
+									className="add-user-input"
+									id="NomedosPais"
+									label="Nome dos Pais"
+									variant="outlined"
+									type="text"
+									required
+									onChange={(e) => {
+										setNdp(e.target.value);
+									}}
+								/>
+								<TextField
+									className="add-user-input"
+									id="escolaridade"
+									label="Escolaridade"
+									variant="outlined"
+									type="text"
+									required
+									onChange={(e) => {
+										setEsc(e.target.value);
+									}}
+								/>
+								<TextField
+									className="add-user-input"
 									id="IDdaGuia"
 									label="ID da Guia"
 									variant="outlined"
@@ -383,7 +441,7 @@ export default function Pacientes() {
 						setSnack(false);
 						deleteUser();
 					}}
-					message="Paciente deletado"
+					message="Clientes deletado"
 					action={
 						<>
 							<Button
@@ -420,7 +478,7 @@ export default function Pacientes() {
 					}}
 				>
 					<Alert variant="filled" severity="error">
-						Esse paciente já está registrado.
+						Esse clientes já está registrado.
 					</Alert>
 				</Snackbar>
 				<Snackbar

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import {
 	Financeiro,
 	Calendario,
-	Pacientes,
+	Clientes,
 	Locatarios,
 	Login,
 	Esqueci_a_senha,
@@ -22,7 +22,7 @@ function App() {
 					<Navbar />
 					<Switch>
 						<Route path="/calendario" component={Calendario} exact />
-						<Route path="/pacientes" component={Pacientes} exact />
+						<Route path="/clientes" component={Clientes} exact />
 						<Route path="/locatarios" component={Locatarios} exact />
 						<Route path="/financeiro" component={Financeiro} exact />
 						<Route path="/planos" component={Planos_de_Saude} exact />
@@ -38,7 +38,7 @@ function App() {
 					<Navbar />
 					<Switch>
 						<Route path="/calendario" component={Calendario} exact />
-						<Route path="/pacientes" component={Pacientes} exact />
+						<Route path="/clientes" component={Clientes} exact />
 						<Route path="/" component={Calendario} />
 					</Switch>
 				</div>
