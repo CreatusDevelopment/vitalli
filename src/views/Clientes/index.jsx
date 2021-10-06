@@ -377,7 +377,6 @@ export default function Clientes() {
 									label="Nome dos Pais"
 									variant="outlined"
 									type="text"
-									required
 									onChange={(e) => {
 										setNdp(e.target.value);
 									}}

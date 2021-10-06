@@ -9,7 +9,13 @@
 	justify-content: center;
 	height: 100vh;
 	flex-direction: column;
-
+	background-image: linear-gradient(
+			rgba(255, 255, 255, 0.627),
+			rgba(255, 255, 255, 0.6)
+		),
+		url("../../res/img/cw.jpeg");
+	background-position: center;
+	background-size: cover;
 	.logo-container {
 		.logo {
 			width: 200px;
