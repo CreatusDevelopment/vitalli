@@ -62,47 +62,49 @@ export default function Login() {
 					{Err}
 				</Alert>
 			</Collapse>
-			<div className="logo-container">
-				<img className="logo" src="/logo.png" alt="Vitalli Psicologia" />
-				{/* <h1>Clinica de Psicologia</h1> */}
+			<div className="white-background">
+				<div className="logo-container">
+					<img className="logo" src="/logo.png" alt="Vitalli Psicologia" />
+					{/* <h1>Clinica de Psicologia</h1> */}
+				</div>
+				<form className="form-container" onSubmit={handleSubmit}>
+					<TextField
+						autoComplete="username"
+						className="input"
+						id="email"
+						label="Email"
+						variant="outlined"
+						type="email"
+						required
+						onChange={(e) => {
+							setEmail(e.target.value);
+						}}
+					/>
+					<TextField
+						autoComplete="current-password"
+						className="input"
+						id="senha"
+						label="Senha"
+						variant="outlined"
+						type="password"
+						required
+						onChange={(e) => {
+							setPassword(e.target.value);
+						}}
+					/>
+					<Button className="input button" variant="contained" type="submit">
+						Entrar
+					</Button>
+					<Button
+						className="input forgot-password"
+						onClick={() => {
+							history.push("/esqueci_a_senha");
+						}}
+					>
+						Esqueceu sua senha?
+					</Button>
+				</form>
 			</div>
-			<form className="form-container" onSubmit={handleSubmit}>
-				<TextField
-					autoComplete="username"
-					className="input"
-					id="email"
-					label="Email"
-					variant="outlined"
-					type="email"
-					required
-					onChange={(e) => {
-						setEmail(e.target.value);
-					}}
-				/>
-				<TextField
-					autoComplete="current-password"
-					className="input"
-					id="senha"
-					label="Senha"
-					variant="outlined"
-					type="password"
-					required
-					onChange={(e) => {
-						setPassword(e.target.value);
-					}}
-				/>
-				<Button className="input button" variant="contained" type="submit">
-					Entrar
-				</Button>
-				<Button
-					className="input forgot-password"
-					onClick={() => {
-						history.push("/esqueci_a_senha");
-					}}
-				>
-					Esqueceu sua senha?
-				</Button>
-			</form>
 		</div>
 	);
 }
