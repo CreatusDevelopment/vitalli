@@ -88,6 +88,24 @@ const repeatWeek = [
 	{ nome: "Domingo" },
 ];
 
+const repeatQuantity = [
+	{ nome: "1" },
+	{ nome: "2" },
+	{ nome: "3" },
+	{ nome: "4" },
+	{ nome: "5" },
+	{ nome: "6" },
+	{ nome: "7" },
+	{ nome: "8" },
+	{ nome: "9" },
+	{ nome: "10" },
+	{ nome: "11" },
+	{ nome: "12" },
+	{ nome: "13" },
+	{ nome: "14" },
+	{ nome: "15" },
+];
+
 const timeSlots = Array.from(new Array(24 * 2)).map(
 	(_, index) =>
 		`${index < 20 ? "0" : ""}${Math.floor(index / 2)}:${
@@ -137,6 +155,7 @@ export default function Calendario() {
 	const [SnackErr2, setSnackErr2] = useState(false);
 	const [SnackErr3, setSnackErr3] = useState(false);
 	const [SnackErr3Message, setSnackErr3Message] = useState("");
+	const [RecorrentQuantity, setRecorrentQuantity] = useState(0);
 
 	function preDeleteSchedule() {
 		preDeleteItem(
@@ -174,6 +193,9 @@ export default function Calendario() {
 						}
 					}
 					setScheduleId([]);
+				} else {
+					setSnackErr3Message(e.response.data.message);
+					setSnackErr3(true);
 				}
 			},
 			{ ids: ScheduleId }
@@ -234,12 +256,12 @@ export default function Calendario() {
 	}, []);
 
 	useEffect(() => {
-		console.log("mandei");
 		setDayInfo([]);
 		setLoading(true);
 		setScheduleId([]);
 		getSchedule(
 			(e) => {
+				console.log(e);
 				setDayInfo(e);
 				setLoading(false);
 			},
@@ -268,6 +290,7 @@ export default function Calendario() {
 				patient: SendPatient,
 				type: Consulta ? "consultation" : "session",
 				day: Recorrente ? RecorrentData : null,
+				count: Recorrente ? RecorrentQuantity : 1,
 				tenant: TenantID === "" ? undefined : TenantID,
 			}
 		);
@@ -407,6 +430,24 @@ export default function Calendario() {
 												{...params}
 												label="Repetir todo(a)..."
 												variant="outlined"
+											/>
+										)}
+									/>
+									<Autocomplete
+										className="input"
+										onChange={(event, value) => {
+											console.log(value?.nome);
+											return setRecorrentQuantity(value?.nome);
+										}}
+										id="quantidade-de-repeticao"
+										options={repeatQuantity}
+										getOptionLabel={(option) => option.nome}
+										renderInput={(params) => (
+											<TextField
+												{...params}
+												label="Repetir..."
+												variant="outlined"
+												type="number"
 											/>
 										)}
 									/>
